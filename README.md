@@ -44,7 +44,7 @@ or if you install nwbuild locally
 
     node_modules/nw-builder/bin/nwbuild -p linux64 dist
 
-#### Usage 
+#### nw-builder usage 
 
     Usage: nwbuild [options] [path]
     
