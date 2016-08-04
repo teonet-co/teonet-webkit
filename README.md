@@ -22,6 +22,9 @@ Run teonet-webkit application
 
     nw dist
 
+*See WKJS documentation:
+http://docs.nwjs.io/en/latest/
+
 
 ## Build your webkit application
 
