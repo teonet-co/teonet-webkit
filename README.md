@@ -12,7 +12,7 @@ Look at available AngularJS sub-generators at the: https://github.com/yeoman/gen
 Run `grunt` for building and `grunt serve` for preview.
 
 
-## Run webkit application
+## Run your webkit application
 
 Install none-webkit
 
@@ -21,6 +21,41 @@ Install none-webkit
 Run teonet-webkit application
 
     nw dist
+
+
+## Build your webkit application
+
+
+### Install nw-builder
+
+Global
+
+    npm install nw-builder -g
+
+Local
+
+    npm install nw-builder --save-dev
+
+### Build your application
+
+    sudo nwbuild -p linux64 landing-short/
+
+or if you install nwbuild locally
+
+    node_modules/nw-builder/bin/nwbuild -p linux64 dist
+
+#### Usage 
+
+    Usage: nwbuild [options] [path]
+    
+    Options:
+      -p, --platforms      Platforms to build, comma-sperated, can be: win32,win64,osx32,osx64,linux32,linux64   ['osx32', 'osx64', 'win32', 'win64']
+      -v, --version        The nw version, eg. 0.8.4                                             [default: "latest"]
+      -r, --run            Runs NW.js for the current platform                                   [default: false]
+      -o, --buildDir       The build folder                                                      [default: "./build"]
+      -f, --forceDownload  Force download of NW.js                                               [default: false]
+      --cacheDir           The cache folder
+      --quiet              Disables logging                                                      [default: false]
 
 
 ## Testing
