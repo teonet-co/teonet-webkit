@@ -2,7 +2,11 @@
   "name": "teonetwebkit",
   "version": "0.0.1",
   "main": "index.html",
+  "node-main": "index.js",
+  "dependencies": {
+    "teonet": "0.0.6"
+  },
   "window": {
-      "height": 820
+    "height": 820
   }
 }

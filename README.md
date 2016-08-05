@@ -11,6 +11,14 @@ Look at available AngularJS sub-generators at the: https://github.com/yeoman/gen
 
 Run `grunt` for building and `grunt serve` for preview.
 
+## Rebuild node_modules
+
+Rebuild node modules in folder dist/node_modules/ffi && ref
+
+    cd dist
+    npm install
+    nw-gyp rebuild --target=0.15.0 --arch=x64
+
 
 ## Run your webkit application
 
@@ -21,6 +29,10 @@ Install none-webkit
 Run teonet-webkit application
 
     nw dist
+
+or with output console.log to terminal
+
+    nw dist --enable-logging=stderr
 
 *See WKJS documentation:
 http://docs.nwjs.io/en/latest/

@@ -72,7 +72,7 @@ module.exports = function (grunt) {
           cacheDir: './build-nwjs/.cache',
           macIcns: './app-icon.icns',
           winIco: './app-icon.ico',
-          //version: '0.16.1',
+          version: '0.15.0',
           buildDir: './build-nwjs' // Where the build version your app is saved
       },
       src: ['./dist/package.json', './dist/**/*'] //.concat(modules) // Your NW.js app      
@@ -390,6 +390,7 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>',
           src: [
             '*.{ico,png,txt}',
+            'index.js',
             'package.json',
             '*.html',
             'images/{,*/}*.{webp}',
@@ -494,36 +495,31 @@ module.exports = function (grunt) {
     'build'
   ]);
 
-    
-    grunt.loadNpmTasks('grunt-nw-builder');
-    
-    grunt.registerTask('build-nwjs', 'Packaging the current app as a node-webkit application.', function (platform) {
-        var platforms = [];
-        // If no platform where specified, determine current platform
-        if (arguments.length === 0) {
-            if (process.platform === 'darwin') { platforms.push('osx'); }
-            else if (process.platform === 'win32') { platforms.push('win'); }
-            else if (process.arch === 'ia32') { platforms.push('linux32'); }
-            else if (process.arch === 'x64') { platforms.push('linux64'); }
+  // Build NWJS packet  
+  grunt.loadNpmTasks('grunt-nw-builder');
+  grunt.registerTask('build-nwjs', 'Packaging the current app as a node-webkit application.', function (platform) {
+    var platforms = [];
+    // If no platform where specified, determine current platform
+    if (arguments.length === 0) {
+        if (process.platform === 'darwin') { platforms.push('osx'); }
+        else if (process.platform === 'win32') { platforms.push('win'); }
+        else if (process.arch === 'ia32') { platforms.push('linux32'); }
+        else if (process.arch === 'x64') { platforms.push('linux64'); }
 
-        } else {
-            if (platform === 'win') { platforms.push('win'); }
-            if (platform === 'mac') { platforms.push('osx'); }
-            if (platform === 'linux32') { platforms.push('linux32'); }
-            if (platform === 'linux34') { platforms.push('linux64'); }
+    } else {
+        if (platform === 'win') { platforms.push('win'); }
+        if (platform === 'mac') { platforms.push('osx'); }
+        if (platform === 'linux32') { platforms.push('linux32'); }
+        if (platform === 'linux34') { platforms.push('linux64'); }
 
-            // Build for All platforms
-            if (platform === 'all') { platforms = ['win', 'osx', 'linux32', 'linux64']; }
+        // Build for All platforms
+        if (platform === 'all') { platforms = ['win', 'osx', 'linux32', 'linux64']; }
+    }
 
-        }
+    if (platforms) {
+        grunt.config('nwjs.options.platforms', platforms);
+    }
 
-
-        if (platforms) {
-            grunt.config('nwjs.options.platforms', platforms);
-        }
-
-        grunt.task.run(['nwjs']);
-
-    });
-  
+    grunt.task.run(['nwjs']);
+  });  
 };

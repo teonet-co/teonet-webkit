@@ -16,17 +16,14 @@ angular.module('teonetWebkitApp')
       'Karma'
     ];
     
-
     // get the system platform using node.js
-//    if(typeof process !== 'undefined' && process.argv[0] === "node") {
-////    if(is_it_nodejs()) {
     try {
         var os = require('os');
         if(os) {
-            console.log(os);
-//            //document.write('You are running on ', os.platform());
+            //console.log(os);
             $scope.os = {};
             $scope.os.platform = 'You are running on ' + os.platform() + '.';
+            $scope.teonet_ver = teonet_ver;
         }
     }
     catch(err) {

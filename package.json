@@ -43,5 +43,8 @@
   "scripts": {
     "start": "node app/index.html",
     "test": "karma start test/karma.conf.js"
+  },
+  "dependencies": {
+    "teonet": "^0.0.3"
   }
 }
