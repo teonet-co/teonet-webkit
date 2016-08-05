@@ -5,3 +5,6 @@
 /bower_components
 /nbproject/private/
 /build/
+/build-nwjs/
+/cache/
+/npm-debug.log
