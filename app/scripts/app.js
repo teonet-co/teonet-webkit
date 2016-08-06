@@ -34,6 +34,11 @@ angular
         controller: 'ContactsCtrl',
         controllerAs: 'contacts'
       })
+      .when('/navbar-main', {
+        templateUrl: 'views/navbar-main.html',
+        controller: 'NavbarMainCtrl',
+        controllerAs: 'navbarMain'
+      })
       .otherwise({
         redirectTo: '/'
       });
