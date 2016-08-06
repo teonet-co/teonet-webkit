@@ -26,7 +26,7 @@
 
 'use strict';
 
-var teonet = require('teonet/teonet');
+var teonet = require('teonet');
 var logger = teonet.syslog('<%= name %>', module.filename);
 
 console.log("Teonet module loaded");

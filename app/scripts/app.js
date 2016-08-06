@@ -17,7 +17,7 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
-  .config(function ($locationProvider, $routeProvider) {
+  .config(function (/*$locationProvider, */$routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/home.html',
@@ -38,4 +38,8 @@ angular
         redirectTo: '/'
       });
 //      $locationProvider.html5Mode(true,"#");      
+  })
+  .run(function(teonet){
+      
+    console.log(teonet.version);    
   });
