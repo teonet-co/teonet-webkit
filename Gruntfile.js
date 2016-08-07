@@ -77,7 +77,7 @@ module.exports = function (grunt) {
           cacheDir: './build-nwjs/.cache',
           macIcns: './app-icon.icns',
           winIco: './app-icon.ico',
-          version: '0.15.0',
+          version: '0.15.4',
           buildDir: './build-nwjs' // Where the build version your app is saved
       },
       src: ['./dist/package.json', './dist/**/*'] //.concat(modules) // Your NW.js app      

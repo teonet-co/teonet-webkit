@@ -1,6 +1,6 @@
 {
-  "name": "teonetwebkit",
-  "version": "0.0.1",
+  "name": "teo-nw",
+  "version": "0.0.2",
   "main": "index.html",
   "node-main1": "index.js",
   "dependencies": {
