@@ -66,7 +66,12 @@ module.exports = function (grunt) {
         ]
       }
     },
-       
+      
+    shell: {
+      start: {
+        command: 'cd dist && npm install && cd ../' 
+      }
+    },    
     nwjs: {
       options: {
           cacheDir: './build-nwjs/.cache',
@@ -485,7 +490,8 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    'htmlmin'
+    'htmlmin',
+    'build-NaN'
   ]);
 
   grunt.registerTask('default', [
@@ -522,4 +528,11 @@ module.exports = function (grunt) {
 
     grunt.task.run(['nwjs']);
   });  
+  
+  // Run npm install after build
+  grunt.loadNpmTasks('grunt-shell');
+//  grunt.registerTask('build-NaN', 'Run npm install after build.', function (platform) {
+//      
+//  });
+  grunt.registerTask('build-NaN', ['shell']);
 };
