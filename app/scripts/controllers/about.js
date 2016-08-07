@@ -32,6 +32,14 @@ angular.module('teonetWebkitApp')
             $scope.os.platform = 'You are running on ' + os.platform() + '.';
             //$scope.teonet_ver = teonet_ver;
         //}
+        
+        // Create a new window and get it
+        var newWin = nw.Window.open('https://github.com');
+
+        // And listen to new window's focus event
+        newWin.on('focus', function() {
+          console.log('New window is focused');
+        });
     }
     catch(err) {
         
