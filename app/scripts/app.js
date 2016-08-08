@@ -29,6 +29,11 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
+      .when('/peers', {
+        templateUrl: 'views/peers.html',
+        controller: 'PeersCtrl',
+        controllerAs: 'peers'
+      })
       .when('/contacts', {
         templateUrl: 'views/contacts.html',
         controller: 'ContactsCtrl',

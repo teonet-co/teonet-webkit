@@ -34,7 +34,7 @@ angular.module('teonetWebkitApp')
             CMD_ECHO_ANSWER: 66
         };
 
-        var _ke; // right pointer to ksnetEvMgrClass
+        //var _ke; // right pointer to ksnetEvMgrClass
         var peers = Object.create(null);
 
         // Application welcome message
@@ -59,7 +59,7 @@ angular.module('teonetWebkitApp')
 
                 // EV_K_STARTED #0 Calls immediately after event manager starts
                 case teonet.ev.EV_K_STARTED:
-                    _ke = ke;
+                    teonet.ke = ke; // Pointer to ksnetEvMgrClass
                     console.log('<%= name_capitalize %> started .... ');
                     break;
 
@@ -119,8 +119,8 @@ angular.module('teonetWebkitApp')
 
             // Initialize teonet event manager and Read configuration
             //var ke = teonet.init(teoEventCb, 3);
-            var ke = teonet.lib.ksnetEvMgrInit(nw.App.argv.length - 1, nw.App.argv.slice(1), teonet.eventCbPtr(teoEventCb), 3);
-
+            var ke = teonet.lib.ksnetEvMgrInit(nw.App.argv.length - 1, nw.App.argv.slice(1), teonet.eventCbPtr(teoEventCb), teonet.opts.READ_ALL|teonet.opts.BLOCK_CLI_INPUT);
+            
             // Set application type
             teonet.setAppType(ke, '<%= name %>');
 
@@ -144,6 +144,8 @@ angular.module('teonetWebkitApp')
     try {
         
         teonet = require('teonet');
+        teonet.ke = null;
+
         teonetDefault(teonet);
     }
     catch(err) {
