@@ -10,7 +10,7 @@
 angular.module('teonetWebkitApp')
   .controller('PeersCtrl', function ($scope, teonet) {
     
-              this.awesomeThings = [
+    this.awesomeThings = [
       'HTML5 Boilerplate',
       'AngularJS',
       'Karma'
@@ -23,7 +23,7 @@ angular.module('teonetWebkitApp')
       $scope.master = angular.copy(user);
       
       var userStr = JSON.stringify(user);
-      teonet.sendCmdTo(teonet.ke, 'teo-nw-ser', 129, userStr);
+      teonet.sendCmdTo(teonet.kePtr, 'teo-nw-ser', 129, userStr);
       console.log('sendCmdTo: ' + userStr);
     };
 

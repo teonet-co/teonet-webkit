@@ -1,6 +1,6 @@
 {
   "name": "teonet-webkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",
     "grunt": "^0.4.5",
@@ -46,6 +46,6 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
-    "teonet": "^0.0.10"
+    "teonet": "^0.0.12"
   }
 }

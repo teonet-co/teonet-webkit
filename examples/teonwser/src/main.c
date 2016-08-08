@@ -64,8 +64,15 @@ void event_cb(ksnetEvMgrClass *ke, ksnetEvMgrEvents event, void *data,
             // DATA event
             ksnCorePacketData *rd = data;
 
-            if(rd->cmd == 129) {
-                printf("%s\n", (char*)rd->data);
+            // Applications commands
+            switch(rd->cmd) {
+                
+                // CMD #129
+                case 129:
+                    printf("%s\n", (char*)rd->data);
+                    break;
+                    
+                default: break;
             }
 	}
 
@@ -76,8 +83,7 @@ void event_cb(ksnetEvMgrClass *ke, ksnetEvMgrEvents event, void *data,
 //            #endif
             break;
 
-        default:
-            break;
+        default: break;
     }
 }
 
