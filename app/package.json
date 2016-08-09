@@ -1,6 +1,7 @@
 {
-  "name": "teo-nw",
-  "version": "0.0.4",
+  "name": "<%= name %>",
+  "version": "<%= version %>",
+  "description": "<%= description %>",
   "main": "index.html",
   "dependencies": {
     "teonet": "^0.0.12"

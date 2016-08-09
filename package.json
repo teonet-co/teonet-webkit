@@ -1,6 +1,7 @@
 {
-  "name": "teonet-webkit",
-  "version": "0.0.4",
+  "name": "<%= name %>",
+  "version": "<%= version %>",
+  "description": "<%= description %>",
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",
     "grunt": "^0.4.5",
