@@ -133,7 +133,7 @@ angular.module('teonetWebkitApp')
                     nw.App.argv.length - 1,
                     nw.App.argv.slice(1),
                     teonet.eventCbPtr(teoEventCb),
-                    teonet.opts.READ_ALL|teonet.opts.BLOCK_CLI_INPUT
+                    (teonet.opts.READ_ALL + teonet.opts.BLOCK_CLI_INPUT)
             );
 
             // Set application type
@@ -176,7 +176,7 @@ angular.module('teonetWebkitApp')
               //if (win != null) win.close(true);
 
               // Stop Teonet
-              console.log('destroy teonet here ...');
+              console.log('Destroy teonet library ...');
               teonet.stop(ke);
               // After teonet stopped if the window should be clouse in stopped event
 

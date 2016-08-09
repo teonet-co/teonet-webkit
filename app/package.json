@@ -1,10 +1,9 @@
 {
   "name": "teo-nw",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.html",
-  "node-main1": "index.js",
   "dependencies": {
-"teonet": "^0.0.12"
+    "teonet": "^0.0.12"
   },
   "scripts": {
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."
