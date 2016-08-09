@@ -8,6 +8,7 @@
  * Controller of the teonetWebkitApp
  */
 angular.module('teonetWebkitApp')
+
   .controller('PeersCtrl', function ($scope, teonet) {
     
     this.awesomeThings = [
@@ -34,5 +35,11 @@ angular.module('teonetWebkitApp')
     $scope.reset();
     
     $scope.var17 = 'Value-17';
+    
+//    function eventCb() { //ke, ev, data, data_len, user_data) {
+//        
+//    }
+//    
+//    teonet.eventCb.register(eventCb);    
     
   });

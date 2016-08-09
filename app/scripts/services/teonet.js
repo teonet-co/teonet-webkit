@@ -10,6 +10,7 @@
  * Factory in the teonetWebkitApp.
  */
 angular.module('teonetWebkitApp')
+
   .factory('teonet', function () {
 
     // Return this method if teoet is not presend in node modules or can't loaded
@@ -163,6 +164,35 @@ angular.module('teonetWebkitApp')
 
         teonet = require('teonet');
         teonet.kePtr = null;
+//        teonet.eventCbAr = new []();        
+//        teonet.eventCb = /*function() {
+//          return*/ {       
+//            /**
+//             * Register event callback
+//             * 
+//             * @param {function} eventCb
+//             * @returns {undefined}
+//             */
+//            register: function (eventCb) {
+//              console.log('Teonet caustom event callback register');
+//              teonet.eventCbAr.push(eventCb);
+//            },
+//
+//            /**
+//             * Unregister event callback
+//             * 
+//             * @param {function} eventCb
+//             * @returns {undefined}
+//             */
+//            unregister: function (eventCb) {
+//              var index = teonet.eventCbAr.indexOf(eventCb);
+//              if (index > -1) {
+//                  console.log('Teonet caustom event callback unregister');
+//                  teonet.eventCbAr.splice(index, 1);
+//              }
+//            }
+//          };
+//        //};
 
         teonetDefault(teonet, function(/*ke_ptr*/) {
 
@@ -190,3 +220,4 @@ angular.module('teonetWebkitApp')
     // Return teonet module or object with someMethod if can't load teomet module
     return teonet;
   });
+  

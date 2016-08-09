@@ -1,3 +1,5 @@
+/* global expect */
+
 'use strict';
 
 describe('Service: teonet', function () {
