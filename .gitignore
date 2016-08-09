@@ -41,3 +41,4 @@
 /examples/teonwser/depcomp
 /examples/teonwser/src/Makefile.in
 /examples/teonwser/src/.libs/lt-teonwser
+/examples/teonwser/src/.libs/
