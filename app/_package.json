@@ -1,7 +1,7 @@
 {
-  "name": "teowk",
-  "version": "0.0.3",
-  "description": "Teonet server node-webkit generator template",
+  "name": "<%= name %>",
+  "version": "<%= version %>",
+  "description": "<%= description %>",
   "main": "index.html",
   "dependencies": {
     "teonet": "^0.0.12"
