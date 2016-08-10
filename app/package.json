@@ -4,7 +4,7 @@
   "description": "Teonet server node-webkit generator template",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.12"
+    "teonet": "^0.0.13"
   },
   "scripts": {
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."

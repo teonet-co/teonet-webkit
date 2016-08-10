@@ -17,6 +17,16 @@ angular
     'ngSanitize',
     'ngTouch'
   ])
+  
+  .constant({
+    /**
+     * This application Teonet API commands
+     */
+    api: {
+        CMD_ECHO_ANSWER: 66
+    }  
+  })
+  
   .config(function (/*$locationProvider, */$routeProvider) {
     $routeProvider
       .when('/', {
@@ -49,6 +59,7 @@ angular
       });
 //      $locationProvider.html5Mode(true,"#");      
   })
+  
   .run(function(teonet){
       
     console.log(teonet.version);    

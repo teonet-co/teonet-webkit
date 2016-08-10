@@ -15,15 +15,17 @@ angular.module('teonetWebkitApp')
 
     // Return this method if Teonet module is not presend in node modules or 
     // can't loaded
-    var meaningOfLife = 42;
     var teonet = {
-      someMethod: function () {
-        return meaningOfLife;
+      /**
+       * This method defined if teonet module is unavalable 
+       * @returns {Number}
+       */  
+      notLoaded: function () {
+        return 1;
       }
     };
 
     // Teonet identifier
-//    var teonet = undefined;
     var ke;
 
     /**
@@ -43,7 +45,8 @@ angular.module('teonetWebkitApp')
          * This application API commands
          */
         var teoApi = {
-            CMD_ECHO_ANSWER: 66
+            CMD_ECHO_ANSWER: 66, ///< Echo answer system command
+            CMD_USER: 129 ///< First user command
         };
 
         //var _ke; // right pointer to ksnetEvMgrClass
@@ -223,21 +226,38 @@ angular.module('teonetWebkitApp')
            *
            * @param {function} $scope Current controllers $scope
            * @param {function} eventCb
-           * @param {type} intervalCb
+           * -param {type} intervalCb
            * @param {type} intervalTime
            * @param {funftion|undefined} initCb
            * @returns {undefined}
            */
-          processing: function ($scope, eventCb, intervalCb, intervalTime, initCb) {
+          processing: function ($scope, eventCb, /*intervalCb, */intervalTime, initCb) {
 
             var interval;
             var self = this;
-
+            
+            /**
+             * Destroy this customEventCb
+             * 
+             * @returns {undefined}
+             */
             function destroy() {
 
                 // Ungegister custom event callback
                 if(typeof eventCb === 'function') {
                     self.customEventCb.unregister(eventCb);
+                }
+            }
+            
+            /**
+             * Send interval event to this customEventCb
+             * 
+             * @returns {undefined}
+             */
+            function intervalCb () {
+                
+                if(typeof eventCb === 'function') {
+                    eventCb(ke, self.ev.EV_A_INTERVAL, null, 0, null);
                 }
             }
 
@@ -264,7 +284,7 @@ angular.module('teonetWebkitApp')
             }
 
             // Send peers request immediately and in controllers interval function
-            if(typeof intervalCb === 'function' && intervalTime > 0) {
+            if(/*typeof intervalCb === 'function' && */intervalTime > 0) {
                 intervalCb();
                 interval = $interval(intervalCb, intervalTime);
             }
