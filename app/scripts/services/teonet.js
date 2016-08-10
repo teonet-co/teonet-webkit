@@ -11,7 +11,7 @@
  */
 angular.module('teonetWebkitApp')
 
-  .factory('teonet', function ($interval) {
+  .factory('teonet', function ($interval, teonetAppApi) {
 
     // Return this method if Teonet module is not presend in node modules or 
     // can't loaded
@@ -41,15 +41,7 @@ angular.module('teonetWebkitApp')
 
         console.log('Teonet module loaded');
 
-        /**
-         * This application API commands
-         */
-        var teoApi = {
-            CMD_ECHO_ANSWER: 66, ///< Echo answer system command
-            CMD_USER: 129 ///< First user command
-        };
-
-        //var _ke; // right pointer to ksnetEvMgrClass
+        // Peers array
         var peers = Object.create(null);
 
         // Application welcome message
@@ -104,7 +96,7 @@ angular.module('teonetWebkitApp')
 
                     // Command
                     switch (rd.cmd) {
-                        case teoApi.CMD_ECHO_ANSWER:
+                        case teonet.api.CMD_ECHO_ANSWER:
                             peers[rd.from] = 0;
                             break;
 
@@ -173,7 +165,8 @@ angular.module('teonetWebkitApp')
 
         teonet = require('teonet');
         angular.extend(teonet, {          
-          kePtr: null,        
+          kePtr: null,  
+          api: teonetAppApi,
           customEventCb: {
 
             eventCbAr: [], //new Array(),

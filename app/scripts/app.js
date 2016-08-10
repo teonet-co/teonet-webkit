@@ -18,14 +18,16 @@ angular
     'ngTouch'
   ])
   
-  .constant({
+  .constant('teonetAppApi', 
+      
     /**
      * This application Teonet API commands
      */
-    api: {
-        CMD_ECHO_ANSWER: 66
+    {
+        CMD_ECHO_ANSWER: 66,
+        CMD_USER: 129 ///< First user command
     }  
-  })
+  )
   
   .config(function (/*$locationProvider, */$routeProvider) {
     $routeProvider

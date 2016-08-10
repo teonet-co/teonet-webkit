@@ -72,7 +72,13 @@ angular.module('teonetWebkitApp')
                 // Command
                 switch (rd.cmd) {
                     
+                    // Process Echo answer #66 command
                     case teonet.api.CMD_ECHO_ANSWER:
+                        console.log('Echo answer command event received');
+                        break;
+                    
+                    // Process User #129 command
+                    case teonet.api.CMD_USER:
                         console.log('Echo answer command event received');
                         break;
 
