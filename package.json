@@ -46,6 +46,6 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
-    "teonet": "^0.0.12"
+    "teonet": "^0.0.13"
   }
 }
