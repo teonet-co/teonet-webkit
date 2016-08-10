@@ -11,9 +11,10 @@
  */
 angular.module('teonetWebkitApp')
 
-  .factory('teonet', function () {
+  .factory('teonet', function ($interval) {
 
-    // Return this method if teoet is not presend in node modules or can't loaded
+    // Return this method if Teonet module is not presend in node modules or 
+    // can't loaded
     var meaningOfLife = 42;
     var teonet = {
       someMethod: function () {
@@ -22,6 +23,7 @@ angular.module('teonetWebkitApp')
     };
 
     // Teonet identifier
+//    var teonet = undefined;
     var ke;
 
     /**
@@ -31,7 +33,7 @@ angular.module('teonetWebkitApp')
      * @param {type} cb Callback called when teonect started
      * @returns {pointer} Pointer to created ksnetEvMgrClass
      */
-    function teonetDefault(teonet, cb) {
+    function start(teonet, cb) {
 
         //var logger = teonet.syslog('<%= name %>', module.filename);
 
@@ -59,10 +61,11 @@ angular.module('teonetWebkitApp')
          * @param {pointer} ke Pointer to ksnetEvMgrClass, see the http://repo.ksproject.org/docs/teonet/structksnetEvMgrClass.html
          * @param {int} ev Teonet event number, see the http://repo.ksproject.org/docs/teonet/ev__mgr_8h.html#ad7b9bff24cb809ad64c305b3ec3a21fe
          * @param {pointer} data Binary or string (depended on event) data
-         * -param {int} data_len Data length
-         * -param {pointer} user_data Additional poiner to User data
+         * @param {int} dataLen Data length
+         * @param {pointer} userData Additional poiner to User data
          */
-        function teoEventCb(ke, ev, data) { //, data_len, user_data) {
+        function teoEventCb(ke, ev, data, dataLen, userData) {
+            
             var rd;
 
             switch (ev) {
@@ -118,6 +121,9 @@ angular.module('teonetWebkitApp')
 
                 default: break;
             }
+            
+            // Execute registered custom event loops
+            teonet.customEventCb.processing(ke, ev, data, dataLen, userData);
         }
 
         /**
@@ -159,42 +165,114 @@ angular.module('teonetWebkitApp')
         return teoStart(teonet);
     }
 
-    // Try load Teonet modyle
+    // Try load Teonet module
     try {
 
         teonet = require('teonet');
-        teonet.kePtr = null;
-//        teonet.eventCbAr = new []();        
-//        teonet.eventCb = /*function() {
-//          return*/ {       
-//            /**
-//             * Register event callback
-//             * 
-//             * @param {function} eventCb
-//             * @returns {undefined}
-//             */
-//            register: function (eventCb) {
-//              console.log('Teonet caustom event callback register');
-//              teonet.eventCbAr.push(eventCb);
-//            },
-//
-//            /**
-//             * Unregister event callback
-//             * 
-//             * @param {function} eventCb
-//             * @returns {undefined}
-//             */
-//            unregister: function (eventCb) {
-//              var index = teonet.eventCbAr.indexOf(eventCb);
-//              if (index > -1) {
-//                  console.log('Teonet caustom event callback unregister');
-//                  teonet.eventCbAr.splice(index, 1);
-//              }
-//            }
-//          };
-//        //};
+        angular.extend(teonet, {          
+          kePtr: null,        
+          customEventCb: {
 
-        teonetDefault(teonet, function(/*ke_ptr*/) {
+            eventCbAr: [], //new Array(),
+            
+            /**
+             * Register event callback
+             *
+             * @param {function} eventCb
+             * @returns {undefined}
+             */
+            register: function (eventCb) {
+              console.log('Teonet castom event callback registered');
+              this.eventCbAr.push(eventCb);
+            },
+
+            /**
+             * Unregister event callback
+             *
+             * @param {function} eventCb
+             * @returns {undefined}
+             */
+            unregister: function (eventCb) {
+              var index = this.eventCbAr.indexOf(eventCb);
+              if (index > -1) {
+                  console.log('Teonet caustom event callback unregistered');
+                  this.eventCbAr.splice(index, 1);
+              }
+            },
+            
+            /**
+             * Custom even loops processing
+             * 
+             * @param {type} ke
+             * @param {type} ev
+             * @param {type} data
+             * @param {type} dataLen
+             * @param {type} userData
+             * @returns {undefined}
+             */
+            processing: function (ke, ev, data, dataLen, userData) {
+                for (var i = 0, len = this.eventCbAr.length; i < len; i++) {
+                    if(this.eventCbAr[i](ke, ev, data, dataLen, userData)) {
+                        break;
+                    }    
+                }
+            }
+          },
+          /**
+           * Initialize and start Teonet controller processing and register it destroy
+           *
+           * @param {function} $scope Current controllers $scope
+           * @param {function} eventCb
+           * @param {type} intervalCb
+           * @param {type} intervalTime
+           * @param {funftion|undefined} initCb
+           * @returns {undefined}
+           */
+          processing: function ($scope, eventCb, intervalCb, intervalTime, initCb) {
+
+            var interval;
+            var self = this;
+
+            function destroy() {
+
+                // Ungegister custom event callback
+                if(typeof eventCb === 'function') {
+                    self.customEventCb.unregister(eventCb);
+                }
+            }
+
+            // Registration Destroy and Stop interval on controller destroy or on
+            // teonet close(disconnect) event
+            $scope.stopFight = function() {
+                if (angular.isDefined(interval)) {
+                    $interval.cancel(interval);
+                    interval = undefined;
+                }
+                destroy();
+            };
+            $scope.$on('$destroy', $scope.stopFight);
+            $scope.$on('teonet-close', $scope.stopFight);
+
+            // Register custom event callback
+            if(typeof eventCb === 'function') {
+                this.customEventCb.register(eventCb);
+            }
+
+            // Exequte initialized callback
+            if(typeof initCb === 'function') { 
+                initCb(); 
+            }
+
+            // Send peers request immediately and in controllers interval function
+            if(typeof intervalCb === 'function' && intervalTime > 0) {
+                intervalCb();
+                interval = $interval(intervalCb, intervalTime);
+            }
+          }
+        });
+        
+        // Start Teonet with default event loop
+        start(teonet, function(/*ke_ptr*/) {
 
             // Listen to main window's close event
             nw.Window.get().on('close', function() {
@@ -214,10 +292,9 @@ angular.module('teonetWebkitApp')
         });
     }
     catch(err) {
-
+        console.log('Can\'t load Teonet module');
     }
 
     // Return teonet module or object with someMethod if can't load teomet module
     return teonet;
   });
-  
