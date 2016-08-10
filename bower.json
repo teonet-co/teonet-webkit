@@ -1,6 +1,6 @@
 {
   "name": "teonet-webkit",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "dependencies": {
     "angular": "^1.5.8",
     "bootstrap": "^3.3.7",
