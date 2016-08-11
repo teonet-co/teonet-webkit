@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc function
- * @name teonetWebkitApp.controller:PeersCtrl
+ * @name teonetWebkitApp.controller:TestCtrl
  * @description
- * # PeersCtrl
+ * # TestCtrl
  * Controller of the teonetWebkitApp
  */
 angular.module('teonetWebkitApp')
 
-  .controller('PeersCtrl', ['$scope', 'teonet', function ($scope, teonet) {
+  .controller('TestCtrl', function ($scope, teonet) {
 
     this.awesomeThings = [
       'HTML5 Boilerplate',
@@ -98,19 +98,9 @@ angular.module('teonetWebkitApp')
         return 0;
     }
 
-//    /**
-//     * Teonet controller interval callback
-//     *
-//     * @returns {undefined}
-//     */
-//    function intervalCb() {
-//
-//        console.log('Teonet controller interval callback called');
-//    }
-
     // Processing teonet controller
     teonet.processing($scope, eventCb, /*intervalCb, */1000, function() {
         console.log('Start processing teonet controller');
     });
 
-  }]);
+  });

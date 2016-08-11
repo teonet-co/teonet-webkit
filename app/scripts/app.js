@@ -41,10 +41,10 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
-      .when('/peers', {
-        templateUrl: 'views/peers.html',
-        controller: 'PeersCtrl',
-        controllerAs: 'peers'
+      .when('/test', {
+        templateUrl: 'views/test.html',
+        controller: 'TestCtrl',
+        controllerAs: 'test'
       })
       .when('/contacts', {
         templateUrl: 'views/contacts.html',

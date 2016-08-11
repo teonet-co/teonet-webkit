@@ -2,24 +2,24 @@
 
 'use strict';
 
-describe('Controller: PeersCtrl', function () {
+describe('Controller: TestCtrl', function () {
 
   // load the controller's module
   beforeEach(module('teonetWebkitApp'));
 
-  var PeersCtrl,
+  var TestCtrl,
     scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    PeersCtrl = $controller('PeersCtrl', {
+    TestCtrl = $controller('TestCtrl', {
       $scope: scope
       // place here mocked dependencies
     });
   }));
 
   it('should attach a list of awesomeThings to the scope', function () {
-    expect(PeersCtrl.awesomeThings.length).toBe(3);
+    expect(TestCtrl.awesomeThings.length).toBe(3);
   });
 });
