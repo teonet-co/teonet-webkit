@@ -1,0 +1,74 @@
+    <form novalidate class="bootstrap-form-with-validation">
+        <h2 class="text-center">Bootstrap form basic</h2>
+        <div class="form-group">
+            <label class="control-label" for="text-input">Name</label>
+            <input class="form-control" type="text" name="text-input" id="text-input" ng-model="user.name">
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="password-input">Password Input</label>
+            <input class="form-control" type="password" name="password-input" id="password-input" ng-model="user.passwd">
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="email-input">Email Input</label>
+            <input class="form-control" type="email" name="email-input" id="email-input">
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="phone-input" >Phone number</label>
+            <input class="form-control" name="phone-input" id="phone-input" type="tel">
+        </div>    
+        <div class="form-group">
+            <label class="control-label" for="textarea-input">Textarea </label>
+            <textarea class="form-control" name="textarea-input" id="textarea-input"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="search-input">Search Input Group</label>
+            <div class="input-group">
+                <div class="input-group-addon"><span> <span class="glyphicon glyphicon-search"></span></span>
+                </div>
+                <input class="form-control" type="search" name="search-input" id="search-input">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="file-input">File Input</label>
+            <input type="file" name="file-input" id="file-input">
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label class="control-label" for="checkbox-input">
+                    <input type="checkbox" name="checkbox-input">Checkbox</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="radio">
+                <label class="control-label">
+                    <input type="radio" name="radio-group">Radio</label>
+            </div>
+            <div class="radio">
+                <label class="control-label">
+                    <input type="radio" name="radio-group" checked="">Radio</label>
+            </div>
+            <div class="radio">
+                <label class="control-label">
+                    <input type="radio" name="radio-group">Radio</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">Static Control</label>
+            <p class="form-static-control">A basic template showing the proper way to create bootstrap forms using form group components, labels and input fields.</p>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit" ng-click="update(user)" value="Save">Button</button>
+        </div>
+    </form>
+
+    <pre>user = {{ user | json }}</pre>
+    <pre>master = {{ master | json}}</pre>
+    
+    <p>{{ var17 }}</p>
+    
+    <button ng-click="count = count + 1" ng-init="count=0">
+    Increment
+    </button>
+    <span>
+      count: {{count}}
+    </span>
