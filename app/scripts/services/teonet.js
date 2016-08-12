@@ -42,7 +42,7 @@ angular.module('teonetWebkitApp')
         console.log('Teonet module loaded');
 
         // Peers array
-        var peers = Object.create(null);
+        teonet.peersItems = Object.create(null);
 
         // Application welcome message
         console.log('<%= name_capitalize %> ver. <%= version %>, based on teonet ver. ' + teonet.version());
@@ -76,14 +76,14 @@ angular.module('teonetWebkitApp')
                 case teonet.ev.EV_K_CONNECTED:
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" connected');
-                    peers[rd.from] = 0;
+                    teonet.peersItems[rd.from] = { 'name': rd.from };
                     break;
 
                 // EV_K_DISCONNECTED #4 A peer was disconnected from host
                 case teonet.ev.EV_K_DISCONNECTED:
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" disconnected'/*, arguments*/);
-                    delete peers[rd.from];
+                    delete teonet.peersItems[rd.from];
                     break;
 
                 // EV_K_TIMER #9 Timer event, seted by ksnetEvMgrSetCustomTimer
@@ -97,7 +97,7 @@ angular.module('teonetWebkitApp')
                     // Command
                     switch (rd.cmd) {
                         case teonet.api.CMD_ECHO_ANSWER:
-                            peers[rd.from] = 0;
+                            //teonet.peersItems[rd.from] = rd.from;
                             break;
 
                         default: break;
