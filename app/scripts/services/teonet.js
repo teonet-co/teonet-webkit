@@ -11,7 +11,7 @@
  */
 angular.module('teonetWebkitApp')
 
-  .factory('teonet', function ($interval, teonetAppApi) {
+  .factory('teonet', function ($rootScope, $interval, teonetAppApi) {
 
     // Return this method if Teonet module is not presend in node modules or 
     // can't loaded
@@ -43,6 +43,7 @@ angular.module('teonetWebkitApp')
 
         // Peers array
         teonet.peersItems = Object.create(null);
+        teonet.peersInfo = { 'count': 0 };
 
         // Application welcome message
         console.log('<%= name_capitalize %> ver. <%= version %>, based on teonet ver. ' + teonet.version());
@@ -77,6 +78,8 @@ angular.module('teonetWebkitApp')
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" connected');
                     teonet.peersItems[rd.from] = { 'name': rd.from };
+                    teonet.peersInfo.count++;
+                    $rootScope.$apply();
                     break;
 
                 // EV_K_DISCONNECTED #4 A peer was disconnected from host
@@ -84,6 +87,8 @@ angular.module('teonetWebkitApp')
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" disconnected'/*, arguments*/);
                     delete teonet.peersItems[rd.from];
+                    teonet.peersInfo.count--;
+                    $rootScope.$apply();
                     break;
 
                 // EV_K_TIMER #9 Timer event, seted by ksnetEvMgrSetCustomTimer
@@ -219,12 +224,11 @@ angular.module('teonetWebkitApp')
            *
            * @param {function} $scope Current controllers $scope
            * @param {function} eventCb
-           * -param {type} intervalCb
            * @param {type} intervalTime
            * @param {funftion|undefined} initCb
            * @returns {undefined}
            */
-          processing: function ($scope, eventCb, /*intervalCb, */intervalTime, initCb) {
+          processing: function ($scope, eventCb, intervalTime, initCb) {
 
             var interval;
             var self = this;
