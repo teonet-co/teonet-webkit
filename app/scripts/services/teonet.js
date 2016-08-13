@@ -144,7 +144,7 @@ angular.module('teonetWebkitApp')
             );
 
             // Set application type
-            teonet.setAppType(ke, '<%= name %>');
+            teonet.setAppType(ke, 'teo-wk');
 
             // Set application version
             teonet.setAppVersion(ke, '<%= version %>');
@@ -293,7 +293,7 @@ angular.module('teonetWebkitApp')
 
             // Set this host name
             var host = teonet.host(ke);
-            teonet.peersItems[host] = { 'name': host, 'version': teonet.version(), 'mode': -1 };
+            teonet.peersItems[host] = { 'name': host, 'appType': teonet.getAppType(ke), 'appVersion': teonet.getAppVersion(ke), 'version': teonet.version(), 'mode': -1 };
             teonet.peersInfo.count++;
 
             // Listen to main window's close event
