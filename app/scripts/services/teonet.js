@@ -77,7 +77,7 @@ angular.module('teonetWebkitApp')
                 case teonet.ev.EV_K_CONNECTED:
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" connected');
-                    teonet.peersItems[rd.from] = { 'name': rd.from };
+                    teonet.peersItems[rd.from] = { 'name': rd.from, 'mode': 0 };
                     teonet.peersInfo.count++;
                     $rootScope.$apply();
                     break;
@@ -290,6 +290,11 @@ angular.module('teonetWebkitApp')
         
         // Start Teonet with default event loop
         start(teonet, function(/*ke_ptr*/) {
+
+            // Set this host name
+            var host = teonet.host(ke);
+            teonet.peersItems[host] = { 'name': host, 'version': teonet.version(), 'mode': -1 };
+            teonet.peersInfo.count++;
 
             // Listen to main window's close event
             nw.Window.get().on('close', function() {

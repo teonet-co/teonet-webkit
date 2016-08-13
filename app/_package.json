@@ -4,7 +4,7 @@
   "description": "<%= description %>",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.13"
+    "teonet": "^0.0.14"
   },
   "scripts": {
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."
