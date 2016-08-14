@@ -119,6 +119,12 @@ angular.module('teonetWebkitApp')
                         // Process command #66 CMD_ECHO_ANSWER
                         case teonet.api.CMD_ECHO_ANSWER:
                             //teonet.peersItems[rd.from] = rd.from;
+                            var arpDataPtr = teonet.getArp(ke, rd.from);
+                            if(arpDataPtr) {
+                                var arpData = new teonet.arpData(arpDataPtr);
+                                //console.log('Peer "' + rd.from + '" arpData.addr: "' + arpData.addr + '", arpData.triptime: ' + arpData.triptime);
+                                teonet.peersItems[rd.from].tripTime = arpData.triptime;
+                            }
                             break;
                             
                         // Process command #91 CMD_HOST_INFO_ANSWER
