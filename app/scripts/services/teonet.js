@@ -29,6 +29,19 @@ angular.module('teonetWebkitApp')
     var ke;
 
     /**
+     * Send host info request
+     *
+     * @param {'pointer'} ke Pointer to ksnetEvMgrClass
+     * @param {'string'} name Peers name
+     *
+     * @returns {undefined}
+     */
+    function sendHostInfoRequest(ke, name) {
+        
+        teonet.sendCmdTo(ke, name, teonet.api.CMD_HOST_INFO, 'JSON');
+    }
+
+    /**
      * Start Teonet with default event loop
      *
      * @param {type} teonet
@@ -47,7 +60,7 @@ angular.module('teonetWebkitApp')
 
         // Application welcome message
         console.log('<%= name_capitalize %> ver. <%= version %>, based on teonet ver. ' + teonet.version());
-
+        
         /**
          * Teonet event callback
          *
@@ -78,6 +91,7 @@ angular.module('teonetWebkitApp')
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" connected');
                     teonet.peersItems[rd.from] = { 'name': rd.from, 'mode': 0 };
+                    sendHostInfoRequest(ke, rd.from);
                     teonet.peersInfo.count++;
                     $rootScope.$apply();
                     break;
@@ -101,8 +115,22 @@ angular.module('teonetWebkitApp')
 
                     // Command
                     switch (rd.cmd) {
+                        
+                        // Process command #66 CMD_ECHO_ANSWER
                         case teonet.api.CMD_ECHO_ANSWER:
                             //teonet.peersItems[rd.from] = rd.from;
+                            break;
+                            
+                        // Process command #91 CMD_HOST_INFO_ANSWER
+                        case teonet.api.CMD_HOST_INFO_ANSWER:
+                            // Update peers item
+                            console.log('Peer "' + rd.from + '" host info answer data: "' + rd.data + '"');
+                            if(teonet.peersItems[rd.from]) {
+                                var d = JSON.parse(rd.data);
+                                teonet.peersItems[rd.from].version = d.version;
+                                teonet.peersItems[rd.from].appVersion = d.appVersion;
+                                teonet.peersItems[rd.from].appType = d.appType.toString();
+                            }
                             break;
 
                         default: break;
@@ -289,11 +317,18 @@ angular.module('teonetWebkitApp')
         });
         
         // Start Teonet with default event loop
-        start(teonet, function(/*ke_ptr*/) {
+        start(teonet, function(kePtr) {
 
             // Set this host name
             var host = teonet.host(ke);
-            teonet.peersItems[host] = { 'name': host, 'appType': teonet.getAppType(ke), 'appVersion': teonet.getAppVersion(ke), 'version': teonet.version(), 'mode': -1 };
+            teonet.peersItems[host] = { 
+                'name': host, 
+                'appType': teonet.getAppType(ke), 
+                'appVersion': teonet.getAppVersion(ke), 
+                'version': teonet.version(), 
+                'mode': -1 
+            };
+            sendHostInfoRequest(kePtr, host);
             teonet.peersInfo.count++;
 
             // Listen to main window's close event
