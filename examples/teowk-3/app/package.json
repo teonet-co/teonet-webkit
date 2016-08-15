@@ -1,15 +1,16 @@
 {
   "name": "teowk-3",
-  "version": "0.0.9",
+  "version": "0.0.20",
   "description": "Teonet server node webkit",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.13"
+    "teonet": "^0.0.29"
   },
   "scripts": {
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."
   },
   "window": {
-    "height": 820
+    "width": 992,  
+    "height": 860
   }
 }

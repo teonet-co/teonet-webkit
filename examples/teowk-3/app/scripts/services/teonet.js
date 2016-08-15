@@ -11,7 +11,7 @@
  */
 angular.module('teonetWebkitApp')
 
-  .factory('teonet', function ($interval, teonetAppApi) {
+  .factory('teonet', function ($rootScope, $interval, teonetAppApi) {
 
     // Return this method if Teonet module is not presend in node modules or 
     // can't loaded
@@ -29,6 +29,47 @@ angular.module('teonetWebkitApp')
     var ke;
 
     /**
+     * Send host info request
+     *
+     * @param {'pointer'} ke Pointer to ksnetEvMgrClass
+     * @param {'string'} name Peers name
+     *
+     * @returns {undefined}
+     */
+    function sendHostInfoRequest(ke, name) {
+        
+        teonet.sendCmdTo(ke, name, teonet.api.CMD_HOST_INFO, 'JSON');
+    }
+    
+    /**
+     * Get peers arp and save it in teonet.Items object
+     *
+     * @param {'pointer'} ke Pointer to ksnetEvMgrClass
+     * @param {'string'} name Peers name
+     *
+     * @returns {undefined}
+     */
+    function getArp(ke, name) {
+        
+        var arpDataPtr = teonet.getArp(ke, name);
+        if(arpDataPtr) {
+            // Get current time
+            teonet.peersItems[name].currentTime = teonet.getTime();
+            // Get arp data object from poiner
+            var arpData = new teonet.arpData(arpDataPtr);
+            teonet.peersItems[name].arp = arpData;
+            // IP
+            var ipArr = [];
+            for(var i = 0; i < arpData.addr.length; i++) {
+                var ch = arpData.addr[i];
+                ipArr.push(String.fromCharCode(ch));
+                if(ch === 0) break;
+            }
+            teonet.peersItems[name].arp.ip = ipArr.join('');
+        }
+    }
+
+    /**
      * Start Teonet with default event loop
      *
      * @param {type} teonet
@@ -43,10 +84,11 @@ angular.module('teonetWebkitApp')
 
         // Peers array
         teonet.peersItems = Object.create(null);
+        teonet.peersInfo = { 'count': 0 };
 
         // Application welcome message
-        console.log('Teowk-3 ver. 0.0.9, based on teonet ver. ' + teonet.version());
-
+        console.log('Teowk-3 ver. 0.0.20, based on teonet ver. ' + teonet.version());
+        
         /**
          * Teonet event callback
          *
@@ -76,7 +118,10 @@ angular.module('teonetWebkitApp')
                 case teonet.ev.EV_K_CONNECTED:
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" connected');
-                    teonet.peersItems[rd.from] = { 'name': rd.from };
+                    teonet.peersItems[rd.from] = { 'name': rd.from, 'mode': 0 };
+                    sendHostInfoRequest(ke, rd.from);
+                    teonet.peersInfo.count++;
+                    $rootScope.$apply();
                     break;
 
                 // EV_K_DISCONNECTED #4 A peer was disconnected from host
@@ -84,6 +129,8 @@ angular.module('teonetWebkitApp')
                     rd = new teonet.packetData(data);
                     console.log('Peer "' + rd.from + '" disconnected'/*, arguments*/);
                     delete teonet.peersItems[rd.from];
+                    teonet.peersInfo.count--;
+                    $rootScope.$apply();
                     break;
 
                 // EV_K_TIMER #9 Timer event, seted by ksnetEvMgrSetCustomTimer
@@ -96,8 +143,22 @@ angular.module('teonetWebkitApp')
 
                     // Command
                     switch (rd.cmd) {
+                        
+                        // Process command #66 CMD_ECHO_ANSWER
                         case teonet.api.CMD_ECHO_ANSWER:
-                            //teonet.peersItems[rd.from] = rd.from;
+                            getArp(ke, rd.from);                            
+                            break;
+                            
+                        // Process command #91 CMD_HOST_INFO_ANSWER
+                        case teonet.api.CMD_HOST_INFO_ANSWER:
+                            // Update peers item
+                            console.log('Peer "' + rd.from + '" host info answer data: "' + rd.data + '"');
+                            if(teonet.peersItems[rd.from]) {
+                                var d = JSON.parse(rd.data);
+                                teonet.peersItems[rd.from].version = d.version;
+                                teonet.peersItems[rd.from].appVersion = d.appVersion;
+                                teonet.peersItems[rd.from].appType = d.appType.toString();
+                            }
                             break;
 
                         default: break;
@@ -139,10 +200,10 @@ angular.module('teonetWebkitApp')
             );
 
             // Set application type
-            teonet.setAppType(ke, 'teowk-3');
+            teonet.setAppType(ke, 'teo-wk');
 
             // Set application version
-            teonet.setAppVersion(ke, '0.0.9');
+            teonet.setAppVersion(ke, '0.0.20');
 
             // Start Timer event
             teonet.setCustomTimer(ke, 5.000);
@@ -167,6 +228,14 @@ angular.module('teonetWebkitApp')
         angular.extend(teonet, {          
           kePtr: null,  
           api: teonetAppApi,
+          /**
+           * Get current teonet event manager time in seconds
+           * 
+           * @returns {'double'}
+           */
+          getTime: function() {            
+            return this.lib.ksnetEvMgrGetTime(ke);
+          },
           customEventCb: {
 
             eventCbAr: [], //new Array(),
@@ -219,12 +288,11 @@ angular.module('teonetWebkitApp')
            *
            * @param {function} $scope Current controllers $scope
            * @param {function} eventCb
-           * -param {type} intervalCb
            * @param {type} intervalTime
            * @param {funftion|undefined} initCb
            * @returns {undefined}
            */
-          processing: function ($scope, eventCb, /*intervalCb, */intervalTime, initCb) {
+          processing: function ($scope, eventCb, intervalTime, initCb) {
 
             var interval;
             var self = this;
@@ -285,7 +353,20 @@ angular.module('teonetWebkitApp')
         });
         
         // Start Teonet with default event loop
-        start(teonet, function(/*ke_ptr*/) {
+        start(teonet, function(kePtr) {
+
+            // Set this host name
+            var host = teonet.host(ke);
+            teonet.peersItems[host] = { 
+                'name': host, 
+                'appType': teonet.getAppType(ke), 
+                'appVersion': teonet.getAppVersion(ke), 
+                'version': teonet.version(), 
+                'mode': -1 
+            };
+            sendHostInfoRequest(kePtr, host);
+            getArp(kePtr, host);
+            teonet.peersInfo.count++;
 
             // Listen to main window's close event
             nw.Window.get().on('close', function() {

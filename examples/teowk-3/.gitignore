@@ -16,6 +16,7 @@
 /examples/teonwser/po/stamp-it
 /examples/teonwser/config.status
 /examples/teonwser/Makefile
+/examples/teonwser/Makefile.in
 /examples/teonwser/po/Makefile.in
 /examples/teonwser/src/config.h
 /examples/teonwser/nbproject/private/configurations.xml

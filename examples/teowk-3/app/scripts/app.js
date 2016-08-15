@@ -24,8 +24,11 @@ angular
      * This application Teonet API commands
      */
     {
-        CMD_ECHO_ANSWER: 66, ///< Echo answer system command
-        CMD_USER: 129 ///< First user command
+        CMD_ECHO_ANSWER: 66,        ///< #66 Answer to auto replay message command
+        CMD_HOST_INFO: 90,          ///< #90 Request host info, allow JSON in request
+        CMD_HOST_INFO_ANSWER: 91,   ///< #91 Host info amswer
+
+        CMD_USER: 129               ///< #129 First user command
     }
   )
 
