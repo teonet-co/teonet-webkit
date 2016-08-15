@@ -1,10 +1,10 @@
 {
   "name": "teowk",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Teonet server node-webkit generator template",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.26"
+    "teonet": "^0.0.29"
   },
   "scripts": {
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."
