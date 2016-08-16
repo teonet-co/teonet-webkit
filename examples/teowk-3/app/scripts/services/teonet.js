@@ -63,7 +63,7 @@ angular.module('teonetWebkitApp')
             for(var i = 0; i < arpData.addr.length; i++) {
                 var ch = arpData.addr[i];
                 ipArr.push(String.fromCharCode(ch));
-                if(ch === 0) break;
+                if(ch === 0) { break; }
             }
             teonet.peersItems[name].arp.ip = ipArr.join('');
         }

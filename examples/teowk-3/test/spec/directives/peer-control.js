@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: peersCount', function () {
+describe('Directive: peerControl', function () {
 
   // load the directive's module
   beforeEach(module('teonetWebkitApp'));
@@ -13,8 +13,8 @@ describe('Directive: peersCount', function () {
   }));
 
   it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<peers-count></peers-count>');
+    element = angular.element('<peer-control></peer-control>');
     element = $compile(element)(scope);
-    expect(element.text()).toBe('this is the peersCount directive');
+    expect(element.text()).toBe('this is the peerControl directive');
   }));
 });
