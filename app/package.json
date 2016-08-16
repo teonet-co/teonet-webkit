@@ -10,6 +10,7 @@
     "install": "cd node_modules/ffi && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../ref && nw-gyp rebuild --target=0.15.4 --arch=x64 && cd ../.."
   },
   "window": {
-    "height": 820
+    "width":  992,
+    "height": 860
   }
 }

@@ -62,7 +62,7 @@ body {
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
-    max-width: 730px;
+    /*max-width: 730px;*/
   }
 
   /* Remove the padding we set earlier */
@@ -81,3 +81,15 @@ body {
     border-bottom: 0;
   }
 }
+
+/* Circle button */
+.btn-circle         { width: 30px;height: 30px;text-align: center; vertical-align: middle; padding: 6px 5px; font-size: 14px; line-height: 1.428571429; border-radius: 15px; }
+.btn-circle.btn-xs  {
+width: 20px;
+    height: 20px;
+    padding: 3px 0 3px 1px;
+    font-size: 69%;
+    outline: 0;
+/* width: 20px;height: 20px;text-align: center; padding: 3px 0; font-size: 75%; line-height: 1.428571429; border-radius: 15px; outline: none; */
+}
+.btn-circle.btn-lg  { width: 50px;height: 50px;padding: 10px 16px; font-size: 18px; line-height:1.33; border-radius: 25px; }

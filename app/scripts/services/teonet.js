@@ -63,7 +63,7 @@ angular.module('teonetWebkitApp')
             for(var i = 0; i < arpData.addr.length; i++) {
                 var ch = arpData.addr[i];
                 ipArr.push(String.fromCharCode(ch));
-                if(ch === 0) break;
+                if(ch === 0) { break; }
             }
             teonet.peersItems[name].arp.ip = ipArr.join('');
         }
@@ -78,7 +78,7 @@ angular.module('teonetWebkitApp')
      */
     function start(teonet, cb) {
 
-        //var logger = teonet.syslog('<%= name %>', module.filename);
+        //var logger = teonet.syslog('teowk-3', module.filename);
 
         console.log('Teonet module loaded');
 
@@ -87,7 +87,7 @@ angular.module('teonetWebkitApp')
         teonet.peersInfo = { 'count': 0 };
 
         // Application welcome message
-        console.log('<%= name_capitalize %> ver. <%= version %>, based on teonet ver. ' + teonet.version());
+        console.log('Teowk-3 ver. 0.0.20, based on teonet ver. ' + teonet.version());
         
         /**
          * Teonet event callback
@@ -110,7 +110,7 @@ angular.module('teonetWebkitApp')
                 // EV_K_STARTED #0 Calls immediately after event manager starts
                 case teonet.ev.EV_K_STARTED:
                     teonet.kePtr = ke; // Pointer to ksnetEvMgrClass
-                    console.log('<%= name_capitalize %> started .... ');
+                    console.log('Teowk-3 started .... ');
                     cb(ke);
                     break;
 
@@ -203,7 +203,7 @@ angular.module('teonetWebkitApp')
             teonet.setAppType(ke, 'teo-wk');
 
             // Set application version
-            teonet.setAppVersion(ke, '<%= version %>');
+            teonet.setAppVersion(ke, '0.0.20');
 
             // Start Timer event
             teonet.setCustomTimer(ke, 5.000);
@@ -212,7 +212,7 @@ angular.module('teonetWebkitApp')
             teonet.run(ke);
 
             // Show exit message
-            console.log('<%= name_capitalize %> application initialization finished ...');
+            console.log('Teowk-3 application initialization finished ...');
 
             return ke;
         }

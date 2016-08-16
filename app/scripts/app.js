@@ -15,7 +15,8 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'datatables'
   ])
 
   .constant('teonetAppApi',
@@ -39,6 +40,11 @@ angular
         controller: 'HomeCtrl',
         controllerAs: 'home'
       })
+      .when('/peers', {
+        templateUrl: 'views/peers.html',
+        controller: 'PeersCtrl',
+        controllerAs: 'peers'
+      })
       .when('/about', {
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl',
@@ -48,6 +54,9 @@ angular
         templateUrl: 'views/test.html',
         controller: 'TestCtrl',
         controllerAs: 'test'
+      })
+      .when('/teodb', {
+        templateUrl: 'views/teodb.html'
       })
       .when('/contacts', {
         templateUrl: 'views/contacts.html',
