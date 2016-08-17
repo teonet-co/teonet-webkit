@@ -2,8 +2,24 @@
 <hr>
 
 <div>
-<button ng-click="myData.doClick(item, $event)">Send AJAX Request</button>
-<br/>
-Data from server: {{ myData.fromServer }}
+    <div class="form-group">
+        <label class="control-label" for="text-input">Key</label>
+        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.key">
+    </div>    
+    <div class="form-group">
+        <label class="control-label" for="text-input">From</label>
+        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.from">
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="text-input">To</label>
+        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.to">
+    </div>
+    <div class="form-group">
+        <button ng-click="req.doClick(req, item, $event)">Send AJAX Request</button>
+    </div>
+
+    <hr>
+    Request: {{ req }} <br>
+    Data from server: {{ res.data }}
 </div>
 
