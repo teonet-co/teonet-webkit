@@ -58,6 +58,11 @@ angular
       .when('/teodb', {
         templateUrl: 'views/teodb.html'
       })
+      .when('/ajax-db', {
+        templateUrl: 'views/ajax-db.html',
+        controller: 'AjaxDbCtrl',
+        controllerAs: 'ajax-db'
+      })
       .when('/contacts', {
         templateUrl: 'views/contacts.html',
         controller: 'ContactsCtrl',
@@ -77,4 +82,9 @@ angular
   .run(function(teonet){
 
     console.log(teonet.version);
+  })
+  .run(function(DTDefaultOptions) {
+    // Display 25 items per page by default
+    DTDefaultOptions.setDisplayLength(25);
   });
+  
