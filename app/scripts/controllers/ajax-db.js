@@ -84,6 +84,20 @@ angular.module('teonetWebkitApp')
       // Check and convert request data
       var undefiedStr = 'undefied';
       var data = checkReq(req);
+      
+//      // Test direct teonet request
+//      teonet.sendCmdTo(
+//            teonet.kePtr,
+//            req.peer ? req.peer : undefiedStr, 
+//            Number(req.cmd ? req.cmd : 129), 
+//            data ? data : undefiedStr
+//      );
+////      teonet.sendCmdTo(teonet.kePtr, 'teo-nw-ser', teonet.api.CMD_USER, data);
+//      
+//      console.log((req.peer ? req.peer : undefiedStr) + '/' + 
+//            (req.cmd ? req.cmd : 129) + '/' + 
+//            (data ? data : undefiedStr)
+//      );
 
       // Send GET request
       $http.get(
@@ -153,6 +167,20 @@ angular.module('teonetWebkitApp')
                   case teonet.api.CMD_USER:
                       //console.log('AjaxDbCtrl: User #1 command received');
                       break;
+                      
+                  // Process CMD_D_LIST_ANSWER #133 command
+                  
+                  case teonet.api.CMD_D_LIST_ANSWER:
+                  case teonet.api.CMD_D_LIST_RANGE_ANSWER:
+                      console.log('AjaxDbCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
+                      teonet.res.send(JSON.stringify(rd.data));
+                      break;  
+                      
+                  // Process CMD_D_LIST_LENGTH_ANSWER #135 command
+                  case teonet.api.CMD_D_LIST_LENGTH_ANSWER:
+                      console.log('AjaxDbCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
+                      teonet.res.send(JSON.stringify(rd.data));
+                      break;  
 
                   default: break;
               }
@@ -162,6 +190,12 @@ angular.module('teonetWebkitApp')
           case teonet.ev.EV_A_INTERVAL:
 
               //console.log('AjaxDbCtrl: Interval event received');
+//              teonet.sendCmdTo(
+//                    ke,
+//                    'teo-nw-ser',
+//                    129, 
+//                    ''
+//              );
               break;
 
           default: break;
@@ -195,12 +229,14 @@ angular.module('teonetWebkitApp')
               console.log( 'peer: ' + req.params.peer + ', cmd: ' + req.params.cmd + ', data: ' + req.params.data );
 
               // \todo Execute teonet callback here
+              teonet.res = res;
+              teonet.sendCmdTo(teonet.kePtr,req.params.peer, Number(req.params.cmd), req.params.data);
 
               // Prepare responce data
-              var data = { request: req.params, data: {} };
+              //var data = { request: req.params, data: {} };
 
               // Send responce with data
-              res.send(JSON.stringify(data));
+              //res.send(JSON.stringify(data));
           });
 
           server = app.listen(serverPort, function () {

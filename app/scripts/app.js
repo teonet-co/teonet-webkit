@@ -26,11 +26,25 @@ angular
      * This application Teonet API commands
      */
     {
+        // System commands
         CMD_ECHO_ANSWER: 66,                ///< #66 Answer to auto replay message command
         CMD_HOST_INFO: 90,                  ///< #90 Request host info, allow JSON in request
         CMD_HOST_INFO_ANSWER: 91,           ///< #91 Host info amswer
 
+        // First user (application) command
         CMD_USER: 129,                      ///< #129 First user command
+        
+        // TeoDB commands
+        CMD_D_LIST: 131,                    ///< #131 List request: { key, id } }
+        CMD_D_LIST_ANSWER: 133,             ///< #133 List response:  [ { key, id }, ... ]
+        
+        CMD_D_LIST_LENGTH: 134,             ///< #134 List length request: { key, id } }
+        CMD_D_LIST_LENGTH_ANSWER: 135,      ///< #135 List response:  { listLength, key, id }
+        
+        CMD_D_LIST_RANGE: 136,              ///< #136 List length request:  { id, key, from, to } }
+        CMD_D_LIST_RANGE_ANSWER: 137,       ///< #137 List response:  { listLength, key, ID }
+        
+        // Last user (application) command
         CMD_USER_LAST: 191                  ///< #191 Last user command
     }
   )

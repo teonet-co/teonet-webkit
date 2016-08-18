@@ -58,7 +58,7 @@ angular.module('teonetWebkitApp')
      */
     function eventCb(ke, ev, data) { //, dataLen, userData) {
 
-        console.log('Custom event callback called');
+        //console.log('Custom event callback called');
         
         var rd;
 
@@ -74,12 +74,12 @@ angular.module('teonetWebkitApp')
                     
                     // Process Echo answer #66 command
                     case teonet.api.CMD_ECHO_ANSWER:
-                        console.log('Echo answer command event received');
+                        //console.log('Echo answer command event received');
                         break;
                     
                     // Process User #129 command
                     case teonet.api.CMD_USER:
-                        console.log('Echo answer command event received');
+                        console.log('Got CMD_USER command');
                         break;
 
                     default: break;
@@ -89,7 +89,7 @@ angular.module('teonetWebkitApp')
             // EV_A_INTERVAL #27 Angular interval event happened    
             case teonet.ev.EV_A_INTERVAL:
                 
-                console.log('Teonet controller interval event received');
+                //console.log('Teonet controller interval event received');
                 break;
             
             default: break;
