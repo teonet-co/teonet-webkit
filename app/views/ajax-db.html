@@ -3,19 +3,19 @@
 
 <div>
     <div class="form-group">
-        <label class="control-label" for="text-input">Key</label>
-        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.key">
+        <label class="control-label" for="peer-input">Peer</label>
+        <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="req.peer">
     </div>    
     <div class="form-group">
-        <label class="control-label" for="text-input">From</label>
-        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.from">
+        <label class="control-label" for="cmd-input">Command</label>
+        <input class="form-control" type="text" name="cmd-input" id="text-input" ng-model="req.cmd">
     </div>
     <div class="form-group">
-        <label class="control-label" for="text-input">To</label>
-        <input class="form-control" type="text" name="text-input" id="text-input" ng-model="req.to">
+        <label class="control-label" for="data-input">Data</label>
+        <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
     </div>
     <div class="form-group">
-        <button ng-click="req.doClick(req, item, $event)">Send AJAX Request</button>
+        <button ng-click="doClick(req, item, $event)">Send AJAX Request</button>
     </div>
 
     <hr>

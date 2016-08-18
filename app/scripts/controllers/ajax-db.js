@@ -9,33 +9,98 @@
  */
 angular.module('teonetWebkitApp')
 
-.controller('AjaxDbCtrl', function ($scope, $http, teonet) {
+.controller('AjaxDbCtrl', function ($scope, $http, $localStorage, teonet) {
 
   this.awesomeThings = [
     'HTML5 Boilerplate',
     'AngularJS',
     'Karma'
   ];
+ 
+  /**
+   * Set LocalStorage Defaults
+   * @returns {undefined}
+   */
+  (function () {
+    if(!$localStorage.restapi) { $localStorage.restapi = {}; }
+    if(!$localStorage.restapi.req) { 
+        $localStorage.restapi.req = {
+            peer: 'teo-db',
+            cmd: 129,
+            data: null
+        };
+    }
+    $scope.req = $localStorage.restapi.req;
+  })();
 
-  $scope.res = { 'data': {} };
-  $scope.req = { 'key': '', 'from': 0, 'to': 25 };
+  /**
+   * Check if input string is JSON object
+   *
+   * @param {type} str JSON string
+   *
+   * @returns {Array|Object|undefined} Parsed json object or undefined if input
+   *                         string can't be parsed
+   */
+  function isJsonString (str) {
 
+      try {
+          return JSON.parse(str);
+      } catch (e) {
+          return undefined;
+      }
+  }
 
-  $scope.req.doClick = function(req /*item, event*/) {
+  /**
+   * Check and convert request data
+   *
+   * @param {'object'} req Request object
+   * @returns {'string'} Checket and converted data to send
+   */
+  function checkReq(req) {
 
+      var obj, data;
+      if(typeof (obj = req.data) === 'object' || 
+         (typeof (data = req.data) === 'string' && 
+          typeof (obj = isJsonString(req.data)) === 'object')) {
+
+          if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
+          else if(typeof data !== 'string') { data = 'null'; }
+      }
+      if(req.peer && req.peer.trim === '') { req.peer = undefined; }
+      if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
+      if(data && data.trim === '') { data = undefined; }      
+
+      return data;
+  }
+
+  /**
+   * Form click function
+   * 
+   * @param {type} req
+   * @returns {undefined}
+   */
+  $scope.doClick = function(req /*item, event*/) {
+
+      // Check and convert request data
+      var undefiedStr = 'undefied';
+      var data = checkReq(req);
+
+      // Send GET request
       $http.get(
 
-          'http://localhost:8181/getData/"' + req.key + '"/' + 
-          req.from + '/' + req.to
+        'http://localhost:8181/api/' + 
+            (req.peer ? req.peer : undefiedStr) + '/' + 
+            (req.cmd ? req.cmd : undefiedStr) + '/' + 
+            (data ? data : undefiedStr)
 
       ).success(function(data/*, status, headers, config*/) {
 
-          angular.extend($scope.req, req);
-          $scope.res.data = data;
+        angular.extend($scope.req, req);
+        $scope.res = { 'data': data };
 
       }).error(function(/*data, status, headers, config*/) {
 
-          //alert('AJAX failed!');
+        //alert('AJAX failed!');
 
       });
   };
@@ -86,7 +151,7 @@ angular.module('teonetWebkitApp')
 
                   // Process User #129 command
                   case teonet.api.CMD_USER:
-                      //console.log('AjaxDbCtrl: Echo answer command event received');
+                      //console.log('AjaxDbCtrl: User #1 command received');
                       break;
 
                   default: break;
@@ -104,53 +169,62 @@ angular.module('teonetWebkitApp')
 
       return 0;
   }
-
+  
+  // RestAPI server object
+  var server;
+  var serverPort = 8181;
+  
   // Start processing teonet controller
-  teonet.processing($scope, eventCb, 1000, function() {
-      console.log('AjaxDbCtrl: Start processing teonet controller');
-  });
+  teonet.processing($scope, eventCb, 1000, 
+  
+    // Initialize callback (calls after teonet initialized)
+    function() {
+      
+        console.log('AjaxDbCtrl: Start processing teonet controller');
+
+        // Start and process RestAPI server 
+        try {
+
+          var express = require('express');
+          var app = express();
+
+          // Get data from TeoDB
+          app.get('/api/:peer/:cmd/:data', function (req, res) {
+
+              // Check params
+              console.log( 'peer: ' + req.params.peer + ', cmd: ' + req.params.cmd + ', data: ' + req.params.data );
+
+              // \todo Execute teonet callback here
+
+              // Prepare responce data
+              var data = { request: req.params, data: {} };
+
+              // Send responce with data
+              res.send(JSON.stringify(data));
+          });
+
+          server = app.listen(serverPort, function () {
+
+              var host = server.address().address;
+              var port = server.address().port;
+              console.log('Ajax data server listening at http://' + host + ':' + port);
+          });
+        }
+        catch(err) {
+          console.log('Can\'t load Express module');
+        }    
+    }, 
+    
+    // Destroy callback (calls after teonet destroyed)
+    function() {
+      
+        console.log('AjaxDbCtrl: Stop processing teonet controller');
+        if(server) { 
+          server.close(function() {
+            console.log('Ajax data server closed.');
+          });
+        }
+    }
+  );
 
 });
-
-try {
-
-    var express = require('express');
-    var app = express();
-    //var fs = require('fs');
-
-    var user = {
-       'user4' : {
-          'name' : 'mohit',
-          'password' : 'password4',
-          'profession' : 'teacher',
-          'id': 4
-       }
-    };
-
-    // Get data from TeoDB
-    app.get('/getData/:key/:from/:to', function (req, res) {
-        
-        // Check params
-        req.params.key = req.params.key.substring(1, req.params.key.length-1);
-        console.log( 'key: ' + req.params.key + ', from: ' + req.params.from + ', to: ' + req.params.to );
-        
-        // Prepare data
-        var data = {};
-        data.request = req.params;
-        data.user4 = user.user4;
-        
-        // Send responce with data
-        //console.log(data.user4.name );
-        res.send(JSON.stringify(data));
-    });
-
-    var server = app.listen(8181, function () {
-
-        var host = server.address().address;
-        var port = server.address().port;
-        console.log('Ajax data server listening at http://%s:%s', host, port);
-    });
-}
-catch(err) {
-    console.log('Can\'t load Express module');
-}

@@ -13,13 +13,13 @@ angular.module('teonetWebkitApp')
 
   .factory('teonet', function ($rootScope, $interval, teonetAppApi) {
 
-    // Return this method if Teonet module is not presend in node modules or 
+    // Return this method if Teonet module is not presend in node modules or
     // can't loaded
     var teonet = {
       /**
-       * This method defined if teonet module is unavalable 
+       * This method defined if teonet module is unavalable
        * @returns {Number}
-       */  
+       */
       notLoaded: function () {
         return 1;
       }
@@ -37,10 +37,10 @@ angular.module('teonetWebkitApp')
      * @returns {undefined}
      */
     function sendHostInfoRequest(ke, name) {
-        
+
         teonet.sendCmdTo(ke, name, teonet.api.CMD_HOST_INFO, 'JSON');
     }
-    
+
     /**
      * Get peers arp and save it in teonet.Items object
      *
@@ -50,7 +50,7 @@ angular.module('teonetWebkitApp')
      * @returns {undefined}
      */
     function getArp(ke, name) {
-        
+
         var arpDataPtr = teonet.getArp(ke, name);
         if(arpDataPtr) {
             // Get current time
@@ -88,7 +88,7 @@ angular.module('teonetWebkitApp')
 
         // Application welcome message
         console.log('Teowk-3 ver. 0.0.20, based on teonet ver. ' + teonet.version());
-        
+
         /**
          * Teonet event callback
          *
@@ -102,7 +102,7 @@ angular.module('teonetWebkitApp')
          * @param {pointer} userData Additional poiner to User data
          */
         function teoEventCb(ke, ev, data, dataLen, userData) {
-            
+
             var rd;
 
             switch (ev) {
@@ -143,12 +143,12 @@ angular.module('teonetWebkitApp')
 
                     // Command
                     switch (rd.cmd) {
-                        
+
                         // Process command #66 CMD_ECHO_ANSWER
                         case teonet.api.CMD_ECHO_ANSWER:
-                            getArp(ke, rd.from);                            
+                            getArp(ke, rd.from);
                             break;
-                            
+
                         // Process command #91 CMD_HOST_INFO_ANSWER
                         case teonet.api.CMD_HOST_INFO_ANSWER:
                             // Update peers item
@@ -177,7 +177,7 @@ angular.module('teonetWebkitApp')
 
                 default: break;
             }
-            
+
             // Execute registered custom event loops
             teonet.customEventCb.processing(ke, ev, data, dataLen, userData);
         }
@@ -225,21 +225,21 @@ angular.module('teonetWebkitApp')
     try {
 
         teonet = require('teonet');
-        angular.extend(teonet, {          
-          kePtr: null,  
+        angular.extend(teonet, {
+          kePtr: null,
           api: teonetAppApi,
           /**
            * Get current teonet event manager time in seconds
-           * 
+           *
            * @returns {'double'}
            */
-          getTime: function() {            
+          getTime: function() {
             return this.lib.ksnetEvMgrGetTime(ke);
           },
           customEventCb: {
 
             eventCbAr: [], //new Array(),
-            
+
             /**
              * Register event callback
              *
@@ -264,22 +264,22 @@ angular.module('teonetWebkitApp')
                   this.eventCbAr.splice(index, 1);
               }
             },
-            
+
             /**
              * Custom even loops processing
-             * 
-             * @param {type} ke
-             * @param {type} ev
-             * @param {type} data
-             * @param {type} dataLen
-             * @param {type} userData
+             *
+             * @param {type} ke Pointer to ksnetEvMgrClass
+             * @param {type} ev Event number
+             * @param {type} data Pointer to event data
+             * @param {type} dataLen Data length
+             * @param {type} userData Pointer to user data
              * @returns {undefined}
              */
             processing: function (ke, ev, data, dataLen, userData) {
                 for (var i = 0, len = this.eventCbAr.length; i < len; i++) {
                     if(this.eventCbAr[i](ke, ev, data, dataLen, userData)) {
                         break;
-                    }    
+                    }
                 }
             }
           },
@@ -289,17 +289,18 @@ angular.module('teonetWebkitApp')
            * @param {function} $scope Current controllers $scope
            * @param {function} eventCb
            * @param {type} intervalTime
-           * @param {funftion|undefined} initCb
+           * @param {funftion|undefined} initCb Initialized controller callback
+           * @param {funftion|undefined} destroyCb Destroed controller callback
            * @returns {undefined}
            */
-          processing: function ($scope, eventCb, intervalTime, initCb) {
+          processing: function ($scope, eventCb, intervalTime, initCb, destroyCb) {
 
             var interval;
             var self = this;
-            
+
             /**
              * Destroy this customEventCb
-             * 
+             *
              * @returns {undefined}
              */
             function destroy() {
@@ -308,15 +309,20 @@ angular.module('teonetWebkitApp')
                 if(typeof eventCb === 'function') {
                     self.customEventCb.unregister(eventCb);
                 }
+                
+                // Execute destroy callback
+                if(typeof destroyCb === 'function') {
+                    destroyCb();
+                }
             }
-            
+
             /**
              * Send interval event to this customEventCb
-             * 
+             *
              * @returns {undefined}
              */
             function intervalCb () {
-                
+
                 if(typeof eventCb === 'function') {
                     eventCb(ke, self.ev.EV_A_INTERVAL, null, 0, null);
                 }
@@ -340,8 +346,8 @@ angular.module('teonetWebkitApp')
             }
 
             // Exequte initialized callback
-            if(typeof initCb === 'function') { 
-                initCb(); 
+            if(typeof initCb === 'function') {
+                initCb();
             }
 
             // Send peers request immediately and in controllers interval function
@@ -351,18 +357,18 @@ angular.module('teonetWebkitApp')
             }
           }
         });
-        
+
         // Start Teonet with default event loop
         start(teonet, function(kePtr) {
 
             // Set this host name
             var host = teonet.host(ke);
-            teonet.peersItems[host] = { 
-                'name': host, 
-                'appType': teonet.getAppType(ke), 
-                'appVersion': teonet.getAppVersion(ke), 
-                'version': teonet.version(), 
-                'mode': -1 
+            teonet.peersItems[host] = {
+                'name': host,
+                'appType': teonet.getAppType(ke),
+                'appVersion': teonet.getAppVersion(ke),
+                'version': teonet.version(),
+                'mode': -1
             };
             sendHostInfoRequest(kePtr, host);
             getArp(kePtr, host);

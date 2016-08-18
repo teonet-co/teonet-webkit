@@ -16,7 +16,8 @@ angular
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'datatables'
+    'datatables',
+    'ngStorage'
   ])
 
   .constant('teonetAppApi',
@@ -25,11 +26,12 @@ angular
      * This application Teonet API commands
      */
     {
-        CMD_ECHO_ANSWER: 66,        ///< #66 Answer to auto replay message command
-        CMD_HOST_INFO: 90,          ///< #90 Request host info, allow JSON in request
-        CMD_HOST_INFO_ANSWER: 91,   ///< #91 Host info amswer
+        CMD_ECHO_ANSWER: 66,                ///< #66 Answer to auto replay message command
+        CMD_HOST_INFO: 90,                  ///< #90 Request host info, allow JSON in request
+        CMD_HOST_INFO_ANSWER: 91,           ///< #91 Host info amswer
 
-        CMD_USER: 129               ///< #129 First user command
+        CMD_USER: 129,                      ///< #129 First user command
+        CMD_USER_LAST: 191                  ///< #191 Last user command
     }
   )
 
