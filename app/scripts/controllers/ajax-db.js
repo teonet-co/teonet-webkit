@@ -230,6 +230,8 @@ angular.module('teonetWebkitApp')
 
               // \todo Execute teonet callback here
               teonet.res = res;
+              var cqd = teonet.cqueAdd(teonet.kePtr, null, 2.0, null);
+              console.log('cqueData ID: ' + cqd.id);
               teonet.sendCmdTo(teonet.kePtr,req.params.peer, Number(req.params.cmd), req.params.data);
 
               // Prepare responce data
