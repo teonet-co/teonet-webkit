@@ -37,7 +37,7 @@
     "karma-phantomjs-launcher": "^1.0.1",
     "phantomjs-prebuilt": "^2.1.10",
     "time-grunt": "^1.0.0",
-    "teonet": "^0.0.35"
+    "teonet": "^0.0.39"
   },
   "engines": {
     "node": ">=0.10.0"

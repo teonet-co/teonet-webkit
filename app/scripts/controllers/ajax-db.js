@@ -16,6 +16,8 @@ angular.module('teonetWebkitApp')
     'AngularJS',
     'Karma'
   ];
+  
+  var apiServerPort = 8181; ///< Teonet RestAPI server port
  
   /**
    * Set LocalStorage Defaults
@@ -85,24 +87,12 @@ angular.module('teonetWebkitApp')
       var undefiedStr = 'undefied';
       var data = checkReq(req);
       
-//      // Test direct teonet request
-//      teonet.sendCmdTo(
-//            teonet.kePtr,
-//            req.peer ? req.peer : undefiedStr, 
-//            Number(req.cmd ? req.cmd : 129), 
-//            data ? data : undefiedStr
-//      );
-////      teonet.sendCmdTo(teonet.kePtr, 'teo-nw-ser', teonet.api.CMD_USER, data);
-//      
-//      console.log((req.peer ? req.peer : undefiedStr) + '/' + 
-//            (req.cmd ? req.cmd : 129) + '/' + 
-//            (data ? data : undefiedStr)
-//      );
-
-      // Send GET request
+      $scope.res = { };
+      
+      // Send api server GET request
       $http.get(
 
-        'http://localhost:8181/api/' + 
+        'http://localhost:' + apiServerPort + '/api/' + 
             (req.peer ? req.peer : undefiedStr) + '/' + 
             (req.cmd ? req.cmd : undefiedStr) + '/' + 
             (data ? data : undefiedStr)
@@ -168,18 +158,21 @@ angular.module('teonetWebkitApp')
                       //console.log('AjaxDbCtrl: User #1 command received');
                       break;
                       
-                  // Process CMD_D_LIST_ANSWER #133 command
-                  
+                  // Process CMD_D_LIST_ANSWER #133, #137 command                  
                   case teonet.api.CMD_D_LIST_ANSWER:
                   case teonet.api.CMD_D_LIST_RANGE_ANSWER:
-                      console.log('AjaxDbCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
-                      teonet.res.send(JSON.stringify(rd.data));
+                      //console.log('AjaxDbCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
+                      var obj = isJsonString(rd.data);
+                      if(obj && obj[0] && obj[0].id) {
+                        teonet.cqueSetData(ke, obj[0].id, JSON.stringify(obj));
+                        teonet.cqueExec(ke, obj[0].id);
+                      }
                       break;  
                       
                   // Process CMD_D_LIST_LENGTH_ANSWER #135 command
                   case teonet.api.CMD_D_LIST_LENGTH_ANSWER:
                       console.log('AjaxDbCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
-                      teonet.res.send(JSON.stringify(rd.data));
+                      teonet.res.send(rd.data);
                       break;  
 
                   default: break;
@@ -187,16 +180,7 @@ angular.module('teonetWebkitApp')
               break;
 
           // EV_A_INTERVAL #27 Angular interval event happened
-          case teonet.ev.EV_A_INTERVAL:
-
-              //console.log('AjaxDbCtrl: Interval event received');
-//              teonet.sendCmdTo(
-//                    ke,
-//                    'teo-nw-ser',
-//                    129, 
-//                    ''
-//              );
-              break;
+          case teonet.ev.EV_A_INTERVAL: break;
 
           default: break;
       }
@@ -206,46 +190,69 @@ angular.module('teonetWebkitApp')
   
   // RestAPI server object
   var server;
-  var serverPort = 8181;
   
   // Start processing teonet controller
   teonet.processing($scope, eventCb, 1000, 
   
-    // Initialize callback (calls after teonet initialized)
+    /**
+     * Initialize callback (calls after teonet initialized)
+     * 
+     * @returns {undefined}
+     */
     function() {
       
-        console.log('AjaxDbCtrl: Start processing teonet controller');
-
+        //console.log('AjaxDbCtrl: Start processing teonet controller');
+                  
         // Start and process RestAPI server 
         try {
 
           var express = require('express');
+          var JSON_STR = 'JSON:';
           var app = express();
 
-          // Get data from TeoDB
+          // Got data from TeoDB
           app.get('/api/:peer/:cmd/:data', function (req, res) {
 
-              // Check params
-              console.log( 'peer: ' + req.params.peer + ', cmd: ' + req.params.cmd + ', data: ' + req.params.data );
+            // Show params
+            //console.log( 'Got request, peer: ' + req.params.peer + 
+            //             ', cmd: ' + req.params.cmd + 
+            //             ', data: ' + req.params.data + 
+            //             ', req.params: ' + JSON.stringify(req.params) 
+            //);
+                               
+            // Create callback
+            var cqd = teonet.cqueAdd(teonet.kePtr, function (id, type, data) {
 
-              // \todo Execute teonet callback here
-              teonet.res = res;
-              var cqd = teonet.cqueAdd(teonet.kePtr, null, 2.0, null);
-              console.log('cqueData ID: ' + cqd.id);
-              teonet.sendCmdTo(teonet.kePtr,req.params.peer, Number(req.params.cmd), req.params.data);
+                // Process calback result: type == 0 - sucess
+                //console.log(
+                //    'Got Callback Queue call with id: ' + id + 
+                //    ', type: ' + type + ' => ' + (type ? 'success' : 'timeout') + 
+                //    ', data: "' + data + '"'
+                //);
+                if(type === 1) {
+                    res.send('{ "request": ' + JSON.stringify(req.params) + ', "type": "' + type + '", "result": "success", "data": ' + data + ' }');
+                } else {
+                    res.send('{ "request": ' + JSON.stringify(req.params) + ', "type": "' + type + '", "result": "timeout" }');
+                }
 
-              // Prepare responce data
-              //var data = { request: req.params, data: {} };
-
-              // Send responce with data
-              //res.send(JSON.stringify(data));
+            }, 2.0, null);
+            
+            // Update Id
+            if (req.params.data.indexOf(JSON_STR) === 0) {
+                var obj = JSON.parse( req.params.data.substring(JSON_STR.length));
+                obj.id = teonet.cqueData(cqd).id;
+                req.params.data = JSON_STR + JSON.stringify(obj);
+            } 
+            
+            // Send command to peer
+            teonet.sendCmdTo(teonet.kePtr,req.params.peer, Number(req.params.cmd), req.params.data);
           });
 
-          server = app.listen(serverPort, function () {
+          server = app.listen(apiServerPort, function () {
 
               var host = server.address().address;
               var port = server.address().port;
-              console.log('Ajax data server listening at http://' + host + ':' + port);
+              console.log('Ajax data server start listening at http://' + host + ':' + port);
           });
         }
         catch(err) {
@@ -253,7 +260,11 @@ angular.module('teonetWebkitApp')
         }    
     }, 
     
-    // Destroy callback (calls after teonet destroyed)
+    /**
+     * Destroy callback (calls after teonet destroyed)
+     * 
+     * @returns {undefined}
+     */
     function() {
       
         console.log('AjaxDbCtrl: Stop processing teonet controller');

@@ -4,7 +4,7 @@
   "description": "Teonet server node webkit",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.35",
+    "teonet": "^0.0.39",
     "express": "^4.14.0"
   },
   "scripts": {
