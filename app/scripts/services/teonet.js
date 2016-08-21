@@ -8,6 +8,9 @@
  * @description
  * # teonet
  * Factory in the teonetWebkitApp.
+ * @param {type} $rootScope
+ * @param {type} $interval
+ * @param {type} teonetAppApi
  */
 angular.module('teonetWebkitApp')
 
@@ -110,7 +113,7 @@ angular.module('teonetWebkitApp')
                 // EV_K_STARTED #0 Calls immediately after event manager starts
                 case teonet.ev.EV_K_STARTED:
                     teonet.kePtr = ke; // Pointer to ksnetEvMgrClass
-                    console.log('Teowk-3 started .... ');
+                    //console.log('Application started .... ');
                     cb(ke);
                     break;
 
@@ -156,8 +159,10 @@ angular.module('teonetWebkitApp')
                             if(teonet.peersItems[rd.from]) {
                                 var d = JSON.parse(rd.data);
                                 teonet.peersItems[rd.from].version = d.version;
-                                teonet.peersItems[rd.from].appVersion = d.appVersion;
-                                teonet.peersItems[rd.from].appType = d.appType.toString();
+                                // jscs:disable
+                                teonet.peersItems[rd.from].appVersion = d.appVersion ? d.appVersion : d.app_version;
+                                // jscs:enable
+                                teonet.peersItems[rd.from].appType =  d.appType ? d.appType.toString() : d.type.toString(); 
                             }
                             break;
 
@@ -286,14 +291,14 @@ angular.module('teonetWebkitApp')
           /**
            * Initialize and start Teonet controller processing and register it destroy
            *
-           * @param {function} $scope Current controllers $scope
+           * @param {function} scope Current controllers $scope
            * @param {function} eventCb
            * @param {type} intervalTime
            * @param {funftion|undefined} initCb Initialized controller callback
            * @param {funftion|undefined} destroyCb Destroed controller callback
            * @returns {undefined}
            */
-          processing: function ($scope, eventCb, intervalTime, initCb, destroyCb) {
+          processing: function (scope, eventCb, intervalTime, initCb, destroyCb) {
 
             var interval;
             var self = this;
@@ -330,15 +335,17 @@ angular.module('teonetWebkitApp')
 
             // Registration Destroy and Stop interval on controller destroy or on
             // teonet close(disconnect) event
-            $scope.stopFight = function() {
-                if (angular.isDefined(interval)) {
-                    $interval.cancel(interval);
-                    interval = undefined;
-                }
-                destroy();
-            };
-            $scope.$on('$destroy', $scope.stopFight);
-            $scope.$on('teonet-close', $scope.stopFight);
+            if(scope) {
+                scope.stopFight = function() {
+                    if (angular.isDefined(interval)) {
+                        $interval.cancel(interval);
+                        interval = undefined;
+                    }
+                    destroy();
+                };
+                scope.$on('$destroy', scope.stopFight);
+                scope.$on('teonet-close', scope.stopFight);
+            }
 
             // Register custom event callback
             if(typeof eventCb === 'function') {

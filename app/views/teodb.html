@@ -1,19 +1,60 @@
-<p>This is the test-2 view.</p>
+<div>        
+    <form novalidate class="bootstrap-form-with-validation">
+        
+      <div class="raw" ng-controller="TeoDbSelectCtrl as teoDb">
+        <span>Select database: </span>
+        <div class="btn-group">        
+          <button class="btn btn-default dropdown-toggle" 
+                data-toggle="dropdown" 
+                aria-expanded="false">{{ teoDb.selected.name }} <span 
+                class="caret"></span>
+          </button>
+
+          <ul class="dropdown-menu">
+            <li ng-repeat="item in teoDb.peerItems"><a href="" ng-click="selectDb({ name: item });">{{ item }}</a></li>  
+          </ul>
+        </div>
+      </div>
+        
+      <div ng-controller="RestApiCtrl as restApi">
+        <div class="form-group">
+            <label class="control-label" for="peer-input">Peer</label>
+            <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="req.peer">
+        </div>    
+        <div class="form-group">
+            <label class="control-label" for="cmd-input">Command</label>
+            <input class="form-control" type="text" name="cmd-input" id="text-input" ng-model="req.cmd">
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="data-input">Data</label>
+            <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
+        </div>
+        <div class="form-group">
+            <button type="submit" ng-click="doClick(req, item, $event)">Send RestAPI Request</button>
+        </div>       
+          <span ng-show="debug">Response: {{ res.data }}</span>
+      </div>
+        
+    </form>
+    <br>
+</div>
+
 <hr>
-<div ng-controller="TeoDbCtrl as showCase">
+
+<div ng-controller="TeoDbCtrl as teoDb">
     <table datatable="ng" class="row-border hover">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>FirstName</th>
-            <th>LastName</th>
+            <th>#</th>
+            <th>Key</th>
+            <th>Value</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="person in showCase.persons">
-            <td>{{ person.id }}</td>
-            <td>{{ person.firstName }}</td>
-            <td>{{ person.lastName }}</td>
+        <tr ng-repeat="item in res.data.data" post-repeat-directive> <!-- teoDb.data -->
+            <td>{{ $index + 1 }}</td>
+            <td>{{ item.key }}</td>
+            <td>{{ item.value }}</td>
         </tr>
         </tbody>
     </table>

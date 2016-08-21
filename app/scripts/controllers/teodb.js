@@ -2,14 +2,17 @@
 
 /**
  * @ngdoc function
- * @name teonetWebkitApp.controller:Test2Ctrl
+ * @name teonetWebkitApp.controller:TeoDbCtrl
  * @description
- * # Test2Ctrl
+ * # TeoDbCtrl
  * Controller of the teonetWebkitApp
+ * @param $rootScope
+ * @param $scope
+ * @param teonet
  */
 angular.module('teonetWebkitApp')
 
-  .controller('TeoDbCtrl', function ($scope, teonet) {
+.controller('TeoDbCtrl', function ($rootScope, $scope, teonet) {
 
     this.awesomeThings = [
       'HTML5 Boilerplate',
@@ -27,26 +30,27 @@ angular.module('teonetWebkitApp')
 //        vm.persons = persons;
 //    });
 
-    var vm = this;
-    vm.persons = [{
-        'id': 860,
-        'firstName': 'Superman',
-        'lastName': 'Yoda'
-    }, {
-        'id': 870,
-        'firstName': 'Foo',
-        'lastName': 'Whateveryournameis'
-    }, {
-        'id': 590,
-        'firstName': 'Toto',
-        'lastName': 'Titi'
-    }, {
-        'id': 803,
-        'firstName': 'Luke',
-        'lastName': 'Kyle'
-    }
-    ];
-
+    // Test data
+//    var testData = [{
+//        'id': 860,
+//        'key': 'Superman',
+//        'value': 'Yoda'
+//      }, {
+//        'id': 870,
+//        'key': 'Foo',
+//        'value': 'Whateveryournameis'
+//      }, {
+//        'id': 590,
+//        'key': 'Toto',
+//        'value': 'Titi'
+//      }, {
+//        'id': 803,
+//        'key': 'Luke',
+//        'value': 'Kyle'
+//      }
+//    ];
+//
+//    $rootScope.res = { 'data': { 'data': testData }};
 
     // ------------------------------------------------------------------------
 
@@ -67,7 +71,7 @@ angular.module('teonetWebkitApp')
      */
     function eventCb(ke, ev, data) { //, dataLen, userData) {
 
-        //console.log('Test2Ctrl: Custom event callback called');
+        //console.log('TeoDbCtrl: Custom event callback called');
 
         var rd;
 
@@ -83,12 +87,12 @@ angular.module('teonetWebkitApp')
 
                     // Process Echo answer #66 command
                     case teonet.api.CMD_ECHO_ANSWER:
-                        //console.log('Test2Ctrl: Echo answer command event received');
+                        //console.log('TeoDbCtrl: Echo answer command event received');
                         break;
 
                     // Process User #129 command
                     case teonet.api.CMD_USER:
-                        //console.log('Test2Ctrl: Echo answer command event received');
+                        //console.log('TeoDbCtrl: Echo answer command event received');
                         break;
 
                     default: break;
@@ -98,7 +102,7 @@ angular.module('teonetWebkitApp')
             // EV_A_INTERVAL #27 Angular interval event happened
             case teonet.ev.EV_A_INTERVAL:
 
-                //console.log('Test2Ctrl: Interval event received');
+                //console.log('TeoDbCtrl: Interval event received');
                 break;
 
             default: break;
@@ -109,7 +113,22 @@ angular.module('teonetWebkitApp')
 
     // Start processing teonet controller
     teonet.processing($scope, eventCb, 1000, function() {
-        //console.log('Test2Ctrl: Start processing teonet controller');
+        //console.log('TeoDbCtrl: Start processing teonet controller');
     });
 
-  });
+})
+
+.controller('TeoDbSelectCtrl', function($scope) {
+
+    var vm = this;
+    vm.peerItems = [ 'teo-db', 'teo-db-gl' ];
+
+    vm.selected = {};
+    vm.selected.name = vm.peerItems[0];    
+    
+    $scope.selectDb = function(db) {
+
+        vm.selected.name = db.name;
+    };
+})  
+;

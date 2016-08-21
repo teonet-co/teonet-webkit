@@ -75,9 +75,9 @@ angular
         templateUrl: 'views/teodb.html'
       })
       .when('/ajax-db', {
-        templateUrl: 'views/ajax-db.html',
-        controller: 'AjaxDbCtrl',
-        controllerAs: 'ajax-db'
+        templateUrl: 'views/restapi.html',
+        controller: 'RestApiCtrl',
+        controllerAs: 'restApi'
       })
       .when('/contacts', {
         templateUrl: 'views/contacts.html',

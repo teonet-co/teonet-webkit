@@ -2,14 +2,19 @@
 
 /**
  * @ngdoc function
- * @name teonetWebkitApp.controller:AjaxDbCtrl
+ * @name teonetWebkitApp.controller:RestApiCtrl
  * @description
- * # AjaxDbCtrl
+ * # RestApiCtrl
  * Controller of the teonetWebkitApp
+ * @param $scope
+ * @param $rootScope
+ * @param $http
+ * @param $localStorage
+ * @param teonet
  */
 angular.module('teonetWebkitApp')
 
-.controller('AjaxDbCtrl', function ($scope, $http, $localStorage, teonet) {
+.controller('RestApiCtrl', function ($scope, $rootScope, $http, $localStorage, teonet) {
 
   this.awesomeThings = [
     'HTML5 Boilerplate',
@@ -53,41 +58,41 @@ angular.module('teonetWebkitApp')
   }
 
   /**
-   * Check and convert request data
-   *
-   * @param {'object'} req Request object
-   * @returns {'string'} Checket and converted data to send
-   */
-  function checkReq(req) {
-
-      var obj, data;
-      if(typeof (obj = req.data) === 'object' || 
-         (typeof (data = req.data) === 'string' && 
-          typeof (obj = isJsonString(req.data)) === 'object')) {
-
-          if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
-          else if(typeof data !== 'string') { data = 'null'; }
-      }
-      if(req.peer && req.peer.trim === '') { req.peer = undefined; }
-      if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
-      if(data && data.trim === '') { data = undefined; }      
-
-      return data;
-  }
-
-  /**
    * Form click function
    * 
-   * @param {type} req
+   * @param {type} req { "peer", "cmd, "data" }
    * @returns {undefined}
    */
   $scope.doClick = function(req /*item, event*/) {
+
+      /**
+       * Check and convert request data
+       *
+       * @param {'object'} req Request object 
+       * @returns {'string'} Checket and converted data to send
+       */
+      function checkReq(req) {
+
+        var obj, data;
+        if(typeof (obj = req.data) === 'object' || 
+           (typeof (data = req.data) === 'string' && 
+            typeof (obj = isJsonString(req.data)) === 'object')) {
+
+            if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
+            else if(typeof data !== 'string') { data = 'null'; }
+        }
+        if(req.peer && req.peer.trim === '') { req.peer = undefined; }
+        if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
+        if(data && data.trim === '') { data = undefined; }      
+
+        return data;
+      }
 
       // Check and convert request data
       var undefiedStr = 'undefied';
       var data = checkReq(req);
       
-      $scope.res = { };
+      //$rootScope.res = { };
       
       // Send api server GET request
       $http.get(
@@ -100,7 +105,7 @@ angular.module('teonetWebkitApp')
       ).success(function(data/*, status, headers, config*/) {
 
         angular.extend($scope.req, req);
-        $scope.res = { 'data': data };
+        $rootScope.res = { 'data': data };
 
       }).error(function(/*data, status, headers, config*/) {
 
@@ -134,7 +139,7 @@ angular.module('teonetWebkitApp')
    */
   function eventCb(ke, ev, data) { //, dataLen, userData) {
 
-      //console.log('AjaxDbCtrl: Custom event callback called');
+      //console.log('RestApiCtrl: Custom event callback called');
 
       var rd;
 
@@ -150,18 +155,18 @@ angular.module('teonetWebkitApp')
 
                   // Process Echo answer #66 command
                   case teonet.api.CMD_ECHO_ANSWER:
-                      //console.log('AjaxDbCtrl: Echo answer command event received');
+                      //console.log('RestApiCtrl: Echo answer command event received');
                       break;
 
                   // Process User #129 command
                   case teonet.api.CMD_USER:
-                      //console.log('AjaxDbCtrl: User #1 command received');
+                      //console.log('RestApiCtrl: User #1 command received');
                       break;
                       
                   // Process CMD_D_LIST_ANSWER #133, #137 command                  
                   case teonet.api.CMD_D_LIST_ANSWER:
                   case teonet.api.CMD_D_LIST_RANGE_ANSWER:
-                      //console.log('AjaxDbCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
+                      //console.log('RestApiCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
                       var obj = isJsonString(rd.data);
                       if(obj && obj[0] && obj[0].id) {
                         teonet.cqueSetData(ke, obj[0].id, JSON.stringify(obj));
@@ -171,7 +176,7 @@ angular.module('teonetWebkitApp')
                       
                   // Process CMD_D_LIST_LENGTH_ANSWER #135 command
                   case teonet.api.CMD_D_LIST_LENGTH_ANSWER:
-                      console.log('AjaxDbCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
+                      console.log('RestApiCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
                       teonet.res.send(rd.data);
                       break;  
 
@@ -201,7 +206,7 @@ angular.module('teonetWebkitApp')
      */
     function() {
       
-        //console.log('AjaxDbCtrl: Start processing teonet controller');
+        //console.log('RestApiCtrl: Start processing teonet controller');
                   
         // Start and process RestAPI server 
         try {
@@ -252,7 +257,8 @@ angular.module('teonetWebkitApp')
 
               var host = server.address().address;
               var port = server.address().port;
-              console.log('Ajax data server start listening at http://' + host + ':' + port);
+              console.log('RestAPI data server start listening at http://' + host + ':' + port);
+              $scope.doClick($scope.req);
           });
         }
         catch(err) {
@@ -267,10 +273,11 @@ angular.module('teonetWebkitApp')
      */
     function() {
       
-        console.log('AjaxDbCtrl: Stop processing teonet controller');
+        console.log('RestApiCtrl: Stop processing teonet controller');
         if(server) { 
           server.close(function() {
-            console.log('Ajax data server closed.');
+            console.log('RestAPI data server closed.');
+            $rootScope.res = undefined;
           });
         }
     }
