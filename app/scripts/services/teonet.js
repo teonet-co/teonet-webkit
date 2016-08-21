@@ -133,6 +133,14 @@ angular.module('teonetWebkitApp')
                     console.log('Peer "' + rd.from + '" disconnected'/*, arguments*/);
                     delete teonet.peersItems[rd.from];
                     teonet.peersInfo.count--;
+                    // Delete from appTypes
+                    for(var i=0 ; i < teonet.appTypes.length; i++) {
+                        for(var j=0; j < teonet.appTypes[i].length; j++) {
+                            if(teonet.appTypes[i][j] === rd.from) {
+                                delete teonet.appTypes[i][j];
+                            }
+                        }
+                    }
                     $rootScope.$apply();
                     break;
 
@@ -154,15 +162,36 @@ angular.module('teonetWebkitApp')
 
                         // Process command #91 CMD_HOST_INFO_ANSWER
                         case teonet.api.CMD_HOST_INFO_ANSWER:
-                            // Update peers item
+
                             console.log('Peer "' + rd.from + '" host info answer data: "' + rd.data + '"');
                             if(teonet.peersItems[rd.from]) {
+
                                 var d = JSON.parse(rd.data);
+                                var appTypeAr = d.appType ? d.appType : d.type;
+
+                                // Update peers item
                                 teonet.peersItems[rd.from].version = d.version;
                                 // jscs:disable
                                 teonet.peersItems[rd.from].appVersion = d.appVersion ? d.appVersion : d.app_version;
                                 // jscs:enable
-                                teonet.peersItems[rd.from].appType =  d.appType ? d.appType.toString() : d.type.toString(); 
+                                teonet.peersItems[rd.from].appType =  appTypeAr.toString();
+
+                                // Update appTypes: [
+                                if(!teonet.appTypes) { teonet.appTypes = []; }
+                                for(var k=0; k < appTypeAr.length; k++) {
+                                    var added = 0, appType = appTypeAr[k];
+                                    if(!teonet.appTypes[appType]) {
+                                        teonet.appTypes[appType] = [rd.from];
+                                        added = 1;
+                                    }
+                                    else if(!teonet.appTypes[appType][rd.from]) {
+                                        teonet.appTypes[appType].push(rd.from);
+                                        added = 1;
+                                    }
+                                    if(added) {
+                                        teonet.appTypes[appType].sort();
+                                    }
+                                }
                             }
                             break;
 
@@ -314,7 +343,7 @@ angular.module('teonetWebkitApp')
                 if(typeof eventCb === 'function') {
                     self.customEventCb.unregister(eventCb);
                 }
-                
+
                 // Execute destroy callback
                 if(typeof destroyCb === 'function') {
                     destroyCb();

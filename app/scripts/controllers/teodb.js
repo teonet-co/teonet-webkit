@@ -6,13 +6,12 @@
  * @description
  * # TeoDbCtrl
  * Controller of the teonetWebkitApp
- * @param $rootScope
  * @param $scope
  * @param teonet
  */
 angular.module('teonetWebkitApp')
 
-.controller('TeoDbCtrl', function ($rootScope, $scope, teonet) {
+.controller('TeoDbCtrl', function ($scope, teonet) {
 
     this.awesomeThings = [
       'HTML5 Boilerplate',
@@ -118,10 +117,12 @@ angular.module('teonetWebkitApp')
 
 })
 
-.controller('TeoDbSelectCtrl', function($scope) {
+.controller('TeoDbSelectCtrl', function($scope, teonet) {
 
     var vm = this;
-    vm.peerItems = [ 'teo-db', 'teo-db-gl' ];
+    vm.peerItems = teonet.appTypes['teo-db']; // [ 'teo-db', 'teo-db-gl' ];
+    if(!vm.peerItems) { vm.peerItems = []; }
+
 
     vm.selected = {};
     vm.selected.name = vm.peerItems[0];    
