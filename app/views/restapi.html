@@ -16,12 +16,13 @@
         <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
     </div>
     <div class="form-group">
-        <button type="submit" ng-click="doClick(req, selectedPeer, item, $event)">Send RestAPI Request</button>
+        <button type="submit" ng-click="doClick(selectedPeer, req.cmd, req.data)">Send RestAPI Request</button>
+        <button type="button" ng-click="res = {};">Clear all responses</button>
     </div>
 
     <hr>
     Request: {{ req }} <br>
-    Data from server: {{ res.data }} <br>
+    Response: {{ res[req.cmd] }} <br>
     <br>
   </form>
 </div>

@@ -30,9 +30,12 @@
             <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
         </div>
         <div class="form-group">
-            <button type="submit" ng-click="doClick(req, selectedPeer, item, $event)">Send RestAPI Request</button>
+            <button type="submit" ng-click="doClick(selectedPeer, req.cmd, req.data)">Send RestAPI Request</button>
         </div>       
-          <span ng-show="debug">Response: {{ res.data }}</span>
+          <span ng-show="debug">Response: {{ res[req.cmd] }}</span>
+        <div class="pull-right">              
+          records total: {{ res[134].data.listLen }}
+        </div>
       </div>
         
     </form>
@@ -51,7 +54,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="item in res.data.data">
+        <tr ng-repeat="item in res[136].data">
             <td>{{ $index + 1 }}</td>
             <td>{{ item.key }}</td>
             <td>{{ item.value }}</td>

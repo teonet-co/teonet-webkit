@@ -14,7 +14,7 @@
  */
 angular.module('teonetWebkitApp')
 
-  .factory('teonet', function ($rootScope, $interval, teonetAppApi) {
+.factory('teonet', function ($rootScope, $interval, teonetAppApi) {
 
     // Return this method if Teonet module is not presend in node modules or
     // can't loaded
@@ -433,4 +433,4 @@ angular.module('teonetWebkitApp')
 
     // Return teonet module or object with someMethod if can't load teomet module
     return teonet;
-  });
+});

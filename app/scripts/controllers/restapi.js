@@ -11,26 +11,34 @@
  * @param $http
  * @param $localStorage
  * @param teonet
+ * @param {type} scopes description
  */
 angular.module('teonetWebkitApp')
 
-.controller('RestApiCtrl', function ($scope, $rootScope, $http, $localStorage, teonet) {
+.controller('RestApiCtrl', function ($scope, $rootScope, $http, $localStorage,
+    teonet, scopes) {
 
   this.awesomeThings = [
     'HTML5 Boilerplate',
     'AngularJS',
     'Karma'
   ];
-  
+
   var apiServerPort = 8181; ///< Teonet RestAPI server port
- 
+
+  // Save this scope to use in other controllers
+  scopes.set('RestApiCtrl', $scope);
+
+//  $scope.CMD_D_LIST_LENGTH = teonet.api.CMD_D_LIST_LENGTH;
+//  $scope.CMD_D_LIST_RANGE = teonet.api.CMD_D_LIST_RANGE;
+
   /**
    * Set LocalStorage Defaults
    * @returns {undefined}
    */
   (function () {
     if(!$localStorage.restapi) { $localStorage.restapi = {}; }
-    if(!$localStorage.restapi.req) { 
+    if(!$localStorage.restapi.req) {
         $localStorage.restapi.req = {
             peer: 'teo-db',
             cmd: 129,
@@ -60,25 +68,27 @@ angular.module('teonetWebkitApp')
 
   /**
    * Form click function
-   * 
-   * @param {type} req { "peer", "cmd, "data" }
+   *
+   * @param {type} peer
+   * @param {type} cmd
+   * @param {type} dataInput { key, from, to }
    * @returns {undefined}
    */
-  $scope.doClick = function(req, peer /*item, event*/) {
+  $scope.doClick = function(peer, cmd, dataInput) {
 
-    req.peer = peer;
+    var req = { 'peer': peer, 'cmd': cmd, 'data': dataInput };
 
     /**
      * Check and convert request data
      *
-     * @param {'object'} req Request object 
+     * @param {'object'} req Request object
      * @returns {'string'} Checket and converted data to send
      */
     function checkReq(req) {
 
       var obj, data;
-      if(typeof (obj = req.data) === 'object' || 
-         (typeof (data = req.data) === 'string' && 
+      if(typeof (obj = req.data) === 'object' ||
+         (typeof (data = req.data) === 'string' &&
           typeof (obj = isJsonString(req.data)) === 'object')) {
 
           if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
@@ -86,7 +96,7 @@ angular.module('teonetWebkitApp')
       }
       if(req.peer && req.peer.trim === '') { req.peer = undefined; }
       if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
-      if(data && data.trim === '') { data = undefined; }      
+      if(data && data.trim === '') { data = undefined; }
 
       return data;
     }
@@ -95,26 +105,55 @@ angular.module('teonetWebkitApp')
     var undefiedStr = 'undefied';
     var data = checkReq(req);
 
-    //$rootScope.res = { };
-
     // Send api server GET request
     $http.get(
 
-      'http://localhost:' + apiServerPort + '/api/' + 
-          (req.peer ? req.peer : undefiedStr) + '/' + 
-          (req.cmd ? req.cmd : undefiedStr) + '/' + 
+      'http://localhost:' + apiServerPort + '/api/' +
+          (req.peer ? req.peer : undefiedStr) + '/' +
+          (req.cmd ? req.cmd : undefiedStr) + '/' +
           (data ? data : undefiedStr)
 
     ).success(function(data/*, status, headers, config*/) {
 
-      angular.extend($scope.req, req);
-      $rootScope.res = { 'data': data };
+      console.log('success data: ' + JSON.stringify(data));
+
+//      angular.extend($scope.req, req);
+
+      if(!$rootScope.res) { $rootScope.res = {}; }
+
+      switch(data.request.cmd) {
+        default:
+            $rootScope.res[data.request.cmd] = data;
+            break;
+      }
+
+//      if(data.data.listLen) {
+//          if(!$rootScope.res.data) { $rootScope.res.data = data; }
+//          $rootScope.res.data.listLen = data.data.listLen;
+//      }
+//      else {
+//          angular.extend($rootScope.res.data, data);
+//      }
+
+      console.log('success data, res: ' + JSON.stringify($rootScope.res));
 
     }).error(function(/*data, status, headers, config*/) {
 
-      //alert('AJAX failed!');
+      // alert('AJAX failed!');
 
     });
+  };
+
+  /**
+   * Set restApi data field
+   *
+   * @param {type} key
+   * @param {type} from
+   * @param {type} to
+   * @returns {undefined}
+   */
+  $scope.setData = function(key, from, to) {
+      $scope.req.data = '{"key":"' + key + '","from":' + from + ',"to":' + to + '}';
   };
 
   // This is Teonet based controller, exit if teonet undefined
@@ -165,8 +204,8 @@ angular.module('teonetWebkitApp')
                   case teonet.api.CMD_USER:
                       //console.log('RestApiCtrl: User #1 command received');
                       break;
-                      
-                  // Process CMD_D_LIST_ANSWER #133, #137 command                  
+
+                  // Process CMD_D_LIST_ANSWER #133, #137 command
                   case teonet.api.CMD_D_LIST_ANSWER:
                   case teonet.api.CMD_D_LIST_RANGE_ANSWER:
                       //console.log('RestApiCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
@@ -175,13 +214,18 @@ angular.module('teonetWebkitApp')
                         teonet.cqueSetData(ke, obj[0].id, JSON.stringify(obj));
                         teonet.cqueExec(ke, obj[0].id);
                       }
-                      break;  
-                      
+                      break;
+
                   // Process CMD_D_LIST_LENGTH_ANSWER #135 command
                   case teonet.api.CMD_D_LIST_LENGTH_ANSWER:
                       console.log('RestApiCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
-                      teonet.res.send(rd.data);
-                      break;  
+                      //teonet.res.send(rd.data);
+                      obj = isJsonString(rd.data);
+                      if(obj && obj.id) {
+                        teonet.cqueSetData(ke, obj.id, JSON.stringify(obj));
+                        teonet.cqueExec(ke, obj.id);
+                      }
+                      break;
 
                   default: break;
               }
@@ -195,23 +239,23 @@ angular.module('teonetWebkitApp')
 
       return 0;
   }
-  
+
   // RestAPI server object
   var server;
-  
+
   // Start processing teonet controller
-  teonet.processing($scope, eventCb, 1000, 
-  
+  teonet.processing($scope, eventCb, 0,
+
     /**
      * Initialize callback (calls after teonet initialized)
-     * 
+     *
      * @returns {undefined}
      */
     function() {
-      
+
         //console.log('RestApiCtrl: Start processing teonet controller');
-                  
-        // Start and process RestAPI server 
+
+        // Start and process RestAPI server
         try {
 
           var express = require('express');
@@ -222,21 +266,22 @@ angular.module('teonetWebkitApp')
           app.get('/api/:peer/:cmd/:data', function (req, res) {
 
             // Show params
-            //console.log( 'Got request, peer: ' + req.params.peer + 
-            //             ', cmd: ' + req.params.cmd + 
-            //             ', data: ' + req.params.data + 
-            //             ', req.params: ' + JSON.stringify(req.params) 
+            //console.log( 'Got request, peer: ' + req.params.peer +
+            //             ', cmd: ' + req.params.cmd +
+            //             ', data: ' + req.params.data +
+            //             ', req.params: ' + JSON.stringify(req.params)
             //);
-                               
+
             // Create callback
             var cqd = teonet.cqueAdd(teonet.kePtr, function (id, type, data) {
 
                 // Process calback result: type == 0 - sucess
                 //console.log(
-                //    'Got Callback Queue call with id: ' + id + 
-                //    ', type: ' + type + ' => ' + (type ? 'success' : 'timeout') + 
+                //    'Got Callback Queue call with id: ' + id +
+                //    ', type: ' + type + ' => ' + (type ? 'success' : 'timeout') +
                 //    ', data: "' + data + '"'
                 //);
+                // Send RestAPI responce
                 if(type === 1) {
                     res.send('{ "request": ' + JSON.stringify(req.params) + ', "type": "' + type + '", "result": "success", "data": ' + data + ' }');
                 } else {
@@ -244,14 +289,14 @@ angular.module('teonetWebkitApp')
                 }
 
             }, 2.0, null);
-            
+
             // Update Id
             if (req.params.data.indexOf(JSON_STR) === 0) {
                 var obj = JSON.parse( req.params.data.substring(JSON_STR.length));
                 obj.id = teonet.cqueData(cqd).id;
                 req.params.data = JSON_STR + JSON.stringify(obj);
-            } 
-            
+            }
+
             // Send command to peer
             teonet.sendCmdTo(teonet.kePtr,req.params.peer, Number(req.params.cmd), req.params.data);
           });
@@ -261,23 +306,25 @@ angular.module('teonetWebkitApp')
               var host = server.address().address;
               var port = server.address().port;
               console.log('RestAPI data server start listening at http://' + host + ':' + port);
-              $scope.doClick($scope.req, $rootScope.selectedPeer);
+              $scope.doClick($rootScope.selectedPeer, teonet.api.CMD_D_LIST_LENGTH, $scope.req.data);
+              $scope.doClick($rootScope.selectedPeer, teonet.api.CMD_D_LIST_RANGE, $scope.req.data);
+
           });
         }
         catch(err) {
           console.log('Can\'t load Express module');
-        }    
-    }, 
-    
+        }
+    },
+
     /**
      * Destroy callback (calls after teonet destroyed)
-     * 
+     *
      * @returns {undefined}
      */
     function() {
-      
+
         console.log('RestApiCtrl: Stop processing teonet controller');
-        if(server) { 
+        if(server) {
           server.close(function() {
             console.log('RestAPI data server closed.');
             $rootScope.res = undefined;
