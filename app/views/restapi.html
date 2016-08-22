@@ -5,7 +5,7 @@
   <form novalidate class="bootstrap-form-with-validation">
     <div class="form-group">
         <label class="control-label" for="peer-input">Peer</label>
-        <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="req.peer">
+        <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="selectedPeer">
     </div>    
     <div class="form-group">
         <label class="control-label" for="cmd-input">Command</label>
@@ -16,7 +16,7 @@
         <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
     </div>
     <div class="form-group">
-        <button type="submit" ng-click="doClick(req, item, $event)">Send RestAPI Request</button>
+        <button type="submit" ng-click="doClick(req, selectedPeer, item, $event)">Send RestAPI Request</button>
     </div>
 
     <hr>

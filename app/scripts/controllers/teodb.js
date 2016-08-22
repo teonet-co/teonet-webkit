@@ -24,32 +24,7 @@ angular.module('teonetWebkitApp')
 
 
     // \todo write yor code here and inside the eventCb function
-//    var vm = this;
-//    $resource('data.json').query().$promise.then(function(persons) {
-//        vm.persons = persons;
-//    });
-
-    // Test data
-//    var testData = [{
-//        'id': 860,
-//        'key': 'Superman',
-//        'value': 'Yoda'
-//      }, {
-//        'id': 870,
-//        'key': 'Foo',
-//        'value': 'Whateveryournameis'
-//      }, {
-//        'id': 590,
-//        'key': 'Toto',
-//        'value': 'Titi'
-//      }, {
-//        'id': 803,
-//        'key': 'Luke',
-//        'value': 'Kyle'
-//      }
-//    ];
-//
-//    $rootScope.res = { 'data': { 'data': testData }};
+    
 
     // ------------------------------------------------------------------------
 
@@ -114,22 +89,27 @@ angular.module('teonetWebkitApp')
     teonet.processing($scope, eventCb, 1000, function() {
         //console.log('TeoDbCtrl: Start processing teonet controller');
     });
-
 })
 
-.controller('TeoDbSelectCtrl', function($scope, teonet) {
+.controller('TeoDbSelectCtrl', function($rootScope, $scope, $localStorage, 
+    teonet) {
 
     var vm = this;
-    vm.peerItems = teonet.appTypes['teo-db']; // [ 'teo-db', 'teo-db-gl' ];
+    vm.peerItems = teonet.appTypes['teo-db'];
     if(!vm.peerItems) { vm.peerItems = []; }
-
-
-    vm.selected = {};
-    vm.selected.name = vm.peerItems[0];    
     
-    $scope.selectDb = function(db) {
+    $rootScope.selectedPeer = $localStorage.restapi.req.peer;
 
-        vm.selected.name = db.name;
+    if(!$rootScope.selectedPeer) {
+        $rootScope.selectedPeer = vm.peerItems[0];
+    }
+    
+    $scope.selectPeer = function(db) {
+        $rootScope.selectedPeer = db.name;
+        
+        // \todo use other controller scope to refresh database key list 
+        // https://gonzalo123.com/2014/09/08/sharing-scope-between-controllers-with-angularjs/
+        
     };
 })  
 ;

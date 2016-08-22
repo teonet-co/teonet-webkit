@@ -38,6 +38,7 @@ angular.module('teonetWebkitApp')
         };
     }
     $scope.req = $localStorage.restapi.req;
+    $rootScope.selectedPeer = $localStorage.restapi.req.peer;
   })();
 
   /**
@@ -63,55 +64,57 @@ angular.module('teonetWebkitApp')
    * @param {type} req { "peer", "cmd, "data" }
    * @returns {undefined}
    */
-  $scope.doClick = function(req /*item, event*/) {
+  $scope.doClick = function(req, peer /*item, event*/) {
 
-      /**
-       * Check and convert request data
-       *
-       * @param {'object'} req Request object 
-       * @returns {'string'} Checket and converted data to send
-       */
-      function checkReq(req) {
+    req.peer = peer;
 
-        var obj, data;
-        if(typeof (obj = req.data) === 'object' || 
-           (typeof (data = req.data) === 'string' && 
-            typeof (obj = isJsonString(req.data)) === 'object')) {
+    /**
+     * Check and convert request data
+     *
+     * @param {'object'} req Request object 
+     * @returns {'string'} Checket and converted data to send
+     */
+    function checkReq(req) {
 
-            if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
-            else if(typeof data !== 'string') { data = 'null'; }
-        }
-        if(req.peer && req.peer.trim === '') { req.peer = undefined; }
-        if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
-        if(data && data.trim === '') { data = undefined; }      
+      var obj, data;
+      if(typeof (obj = req.data) === 'object' || 
+         (typeof (data = req.data) === 'string' && 
+          typeof (obj = isJsonString(req.data)) === 'object')) {
 
-        return data;
+          if(typeof obj === 'object') { data = 'JSON:' + JSON.stringify(obj); }
+          else if(typeof data !== 'string') { data = 'null'; }
       }
+      if(req.peer && req.peer.trim === '') { req.peer = undefined; }
+      if(req.cmd && req.cmd.trim === '') { req.cmd = undefined; }
+      if(data && data.trim === '') { data = undefined; }      
 
-      // Check and convert request data
-      var undefiedStr = 'undefied';
-      var data = checkReq(req);
-      
-      //$rootScope.res = { };
-      
-      // Send api server GET request
-      $http.get(
+      return data;
+    }
 
-        'http://localhost:' + apiServerPort + '/api/' + 
-            (req.peer ? req.peer : undefiedStr) + '/' + 
-            (req.cmd ? req.cmd : undefiedStr) + '/' + 
-            (data ? data : undefiedStr)
+    // Check and convert request data
+    var undefiedStr = 'undefied';
+    var data = checkReq(req);
 
-      ).success(function(data/*, status, headers, config*/) {
+    //$rootScope.res = { };
 
-        angular.extend($scope.req, req);
-        $rootScope.res = { 'data': data };
+    // Send api server GET request
+    $http.get(
 
-      }).error(function(/*data, status, headers, config*/) {
+      'http://localhost:' + apiServerPort + '/api/' + 
+          (req.peer ? req.peer : undefiedStr) + '/' + 
+          (req.cmd ? req.cmd : undefiedStr) + '/' + 
+          (data ? data : undefiedStr)
 
-        //alert('AJAX failed!');
+    ).success(function(data/*, status, headers, config*/) {
 
-      });
+      angular.extend($scope.req, req);
+      $rootScope.res = { 'data': data };
+
+    }).error(function(/*data, status, headers, config*/) {
+
+      //alert('AJAX failed!');
+
+    });
   };
 
   // This is Teonet based controller, exit if teonet undefined
@@ -258,7 +261,7 @@ angular.module('teonetWebkitApp')
               var host = server.address().address;
               var port = server.address().port;
               console.log('RestAPI data server start listening at http://' + host + ':' + port);
-              $scope.doClick($scope.req);
+              $scope.doClick($scope.req, $rootScope.selectedPeer);
           });
         }
         catch(err) {
