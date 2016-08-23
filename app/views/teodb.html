@@ -4,12 +4,12 @@
       <div class="btn-group">        
         <button class="btn btn-default dropdown-toggle" 
               data-toggle="dropdown" 
-              aria-expanded="false">{{ selectedPeer }} <span 
+              aria-expanded="false">{{ teoDb.peerSelected }} <span 
               class="caret"></span>
         </button>
 
         <ul class="dropdown-menu">
-          <li ng-repeat="item in teoDb.peerItems"><a href="" ng-click="selectPeer({ name: item });">{{ item }}</a></li>  
+          <li ng-repeat="item in teoDb.peerItems"><a href="" ng-click="teoDb.selectPeer({ name: item });">{{ item }}</a></li>  
         </ul>
       </div>
     </div>
@@ -19,7 +19,7 @@
       <div ng-controller="RestApiCtrl as restApi">
         <div class="form-group">
             <label class="control-label" for="peer-input">Peer</label>
-            <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="selectedPeer">
+            <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="req.peer">
         </div>    
         <div class="form-group">
             <label class="control-label" for="cmd-input">Command</label>
@@ -30,7 +30,7 @@
             <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
         </div>
         <div class="form-group">
-            <button type="submit" ng-click="doClick(selectedPeer, req.cmd, req.data)">Send RestAPI Request</button>
+            <button type="submit" ng-click="doClick(req.peer, req.cmd, req.data)">Send RestAPI Request</button>
         </div>       
           <span ng-show="debug">Response: {{ res[req.cmd] }}</span>
         <div class="pull-right">              

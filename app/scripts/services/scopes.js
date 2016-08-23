@@ -44,6 +44,9 @@ angular.module('teonetWebkitApp')
         },
         get: function (key) {
             return scopes[key];
+        },
+        remove: function(key) {
+            delete scopes[key];
         }
     };
 });

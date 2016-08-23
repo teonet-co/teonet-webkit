@@ -92,32 +92,38 @@ angular.module('teonetWebkitApp')
     });
 })
 
-.controller('TeoDbSelectCtrl', function($rootScope, $scope, $localStorage, 
-    teonet, scopes) {
+.controller('TeoDbSelectCtrl', function($localStorage, teonet, scopes) {
 
-    var vm = this;    
+    var vm = this;
     vm.peerItems = teonet.appTypes['teo-db'];
     if(!vm.peerItems) { vm.peerItems = []; }
-        
-    if(!$rootScope.selectedPeer) {
-        $rootScope.selectedPeer = vm.peerItems[0];
-    }
-    
-    $rootScope.selectedPeer = $localStorage.restapi.req.peer;
 
-    $scope.selectPeer = function(db) {
-        
+    // Set LocalStorage Defaults
+    if(!$localStorage.restapi) { $localStorage.restapi = {}; }
+    if(!$localStorage.restapi.req) {
+        $localStorage.restapi.req = {
+            peer: vm.peerItems[0],
+            cmd: 136,
+            data: {
+                key: '',
+                from: 0,
+                to: 25
+            }
+        };
+    }
+    vm.peerSelected = $localStorage.restapi.req.peer;
+    if(!vm.peerSelected) { vm.peerSelected = vm.peerItems[0]; }
+
+    vm.selectPeer = function(db) {
+
         var restApi = scopes.get('RestApiCtrl');
-        
+
         // Selected peer
-        $rootScope.selectedPeer = db.name;
-        
-        // Use other controller scope to refresh database key list 
-        //delete $rootScope.res.listLen;
-        //$rootScope.res = [];
-        
+        vm.peerSelected = restApi.req.peer = db.name;
+
+        // Use restApi controller scope to refresh database key list
         restApi.doClick(db.name, teonet.api.CMD_D_LIST_LENGTH, restApi.req.data);
-        restApi.doClick(db.name, teonet.api.CMD_D_LIST_RANGE, restApi.req.data);        
+        restApi.doClick(db.name, teonet.api.CMD_D_LIST_RANGE, restApi.req.data);
     };
-})  
+})
 ;

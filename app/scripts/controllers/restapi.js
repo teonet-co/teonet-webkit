@@ -29,25 +29,16 @@ angular.module('teonetWebkitApp')
   // Save this scope to use in other controllers
   scopes.set('RestApiCtrl', $scope);
 
-//  $scope.CMD_D_LIST_LENGTH = teonet.api.CMD_D_LIST_LENGTH;
-//  $scope.CMD_D_LIST_RANGE = teonet.api.CMD_D_LIST_RANGE;
-
-  /**
-   * Set LocalStorage Defaults
-   * @returns {undefined}
-   */
-  (function () {
-    if(!$localStorage.restapi) { $localStorage.restapi = {}; }
-    if(!$localStorage.restapi.req) {
-        $localStorage.restapi.req = {
-            peer: 'teo-db',
-            cmd: 129,
-            data: null
-        };
-    }
-    $scope.req = $localStorage.restapi.req;
-    $rootScope.selectedPeer = $localStorage.restapi.req.peer;
-  })();
+  // Set LocalStorage Defaults
+  if(!$localStorage.restapi) { $localStorage.restapi = {}; }
+  if(!$localStorage.restapi.req) {
+    $localStorage.restapi.req = { 
+        peer: 'teo-db', 
+        cmd: 129, 
+        data: null 
+    };
+  }
+  $scope.req = $localStorage.restapi.req;
 
   /**
    * Check if input string is JSON object
@@ -72,9 +63,10 @@ angular.module('teonetWebkitApp')
    * @param {type} peer
    * @param {type} cmd
    * @param {type} dataInput { key, from, to }
+   * @param {type} cb
    * @returns {undefined}
    */
-  $scope.doClick = function(peer, cmd, dataInput) {
+  $scope.doClick = function(peer, cmd, dataInput, cb) {
 
     var req = { 'peer': peer, 'cmd': cmd, 'data': dataInput };
 
@@ -115,27 +107,11 @@ angular.module('teonetWebkitApp')
 
     ).success(function(data/*, status, headers, config*/) {
 
-      console.log('success data: ' + JSON.stringify(data));
-
-//      angular.extend($scope.req, req);
-
       if(!$rootScope.res) { $rootScope.res = {}; }
+      $rootScope.res[data.request.cmd] = data;
 
-      switch(data.request.cmd) {
-        default:
-            $rootScope.res[data.request.cmd] = data;
-            break;
-      }
-
-//      if(data.data.listLen) {
-//          if(!$rootScope.res.data) { $rootScope.res.data = data; }
-//          $rootScope.res.data.listLen = data.data.listLen;
-//      }
-//      else {
-//          angular.extend($rootScope.res.data, data);
-//      }
-
-      console.log('success data, res: ' + JSON.stringify($rootScope.res));
+      //console.log('success data, res: ' + JSON.stringify($rootScope.res));
+      if(typeof cb === 'function') { cb(data); }
 
     }).error(function(/*data, status, headers, config*/) {
 
@@ -265,23 +241,10 @@ angular.module('teonetWebkitApp')
           // Got data from TeoDB
           app.get('/api/:peer/:cmd/:data', function (req, res) {
 
-            // Show params
-            //console.log( 'Got request, peer: ' + req.params.peer +
-            //             ', cmd: ' + req.params.cmd +
-            //             ', data: ' + req.params.data +
-            //             ', req.params: ' + JSON.stringify(req.params)
-            //);
-
             // Create callback
             var cqd = teonet.cqueAdd(teonet.kePtr, function (id, type, data) {
 
-                // Process calback result: type == 0 - sucess
-                //console.log(
-                //    'Got Callback Queue call with id: ' + id +
-                //    ', type: ' + type + ' => ' + (type ? 'success' : 'timeout') +
-                //    ', data: "' + data + '"'
-                //);
-                // Send RestAPI responce
+                // Send RestAPI response
                 if(type === 1) {
                     res.send('{ "request": ' + JSON.stringify(req.params) + ', "type": "' + type + '", "result": "success", "data": ' + data + ' }');
                 } else {
@@ -306,8 +269,8 @@ angular.module('teonetWebkitApp')
               var host = server.address().address;
               var port = server.address().port;
               console.log('RestAPI data server start listening at http://' + host + ':' + port);
-              $scope.doClick($rootScope.selectedPeer, teonet.api.CMD_D_LIST_LENGTH, $scope.req.data);
-              $scope.doClick($rootScope.selectedPeer, teonet.api.CMD_D_LIST_RANGE, $scope.req.data);
+              $scope.doClick($scope.req.peer, teonet.api.CMD_D_LIST_LENGTH, $scope.req.data);
+              $scope.doClick($scope.req.peer, teonet.api.CMD_D_LIST_RANGE, $scope.req.data);
 
           });
         }
@@ -330,6 +293,9 @@ angular.module('teonetWebkitApp')
             $rootScope.res = undefined;
           });
         }
+
+        // Remove controller from scopes
+        scopes.remove('RestApiCtrl');
     }
   );
 

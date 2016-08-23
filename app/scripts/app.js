@@ -99,8 +99,8 @@ angular
 
     console.log(teonet.version);
   })
-  .run(function(DTDefaultOptions) {
-    // Display 25 items per page by default
-    DTDefaultOptions.setDisplayLength(25);
-  });
-  
+//  .run(function(DTDefaultOptions) {
+//    // Display 25 items per page by default
+//    DTDefaultOptions.setDisplayLength(25);
+//  })
+;
