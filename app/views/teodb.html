@@ -1,45 +1,11 @@
 <div>        
-    <div class="raw" ng-controller="TeoDbSelectCtrl as teoDb">
-      <span>Select database: </span>
-      <div class="btn-group">        
-        <button class="btn btn-default dropdown-toggle" 
-              data-toggle="dropdown" 
-              aria-expanded="false">{{ teoDb.peerSelected }} <span 
-              class="caret"></span>
-        </button>
-
-        <ul class="dropdown-menu">
-          <li ng-repeat="item in teoDb.peerItems"><a href="" ng-click="teoDb.selectPeer({ name: item });">{{ item }}</a></li>  
-        </ul>
-      </div>
+    <peer-select />
+    <div class="pull-right">              
+      records total: {{ listLen }}
     </div>
-        
-    <form novalidate class="bootstrap-form-with-validation">
-        
-      <div ng-controller="RestApiCtrl as restApi">
-        <div class="form-group">
-            <label class="control-label" for="peer-input">Peer</label>
-            <input class="form-control" type="text" name="peer-input" id="text-input" ng-model="req.peer">
-        </div>    
-        <div class="form-group">
-            <label class="control-label" for="cmd-input">Command</label>
-            <input class="form-control" type="text" name="cmd-input" id="text-input" ng-model="req.cmd">
-        </div>
-        <div class="form-group">
-            <label class="control-label" for="data-input">Data</label>
-            <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
-        </div>
-        <div class="form-group">
-            <button type="submit" ng-click="doClick(req.peer, req.cmd, req.data)">Send RestAPI Request</button>
-        </div>       
-          <span ng-show="debug">Response: {{ res[req.cmd] }}</span>
-        <div class="pull-right">              
-          records total: {{ res[134].data.listLen }}
-        </div>
-      </div>
-        
-    </form>
-    <br>
+
+    Qumebob!!!
+    
 </div>
 
 <hr>
@@ -54,7 +20,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="item in res[136].data">
+        <tr ng-repeat="item in data">
             <td>{{ $index + 1 }}</td>
             <td>{{ item.key }}</td>
             <td>{{ item.value }}</td>

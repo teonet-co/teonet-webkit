@@ -1,0 +1,15 @@
+<div class="raw">
+    <span>Select database: </span>
+    <div class="btn-group">
+      <button class="btn btn-default dropdown-toggle"
+            data-toggle="dropdown"
+            aria-expanded="false">{{ peerSelected.name }} <span
+            class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li ng-repeat="item in peerItems">
+            <a href="" ng-click="selectPeer({ name: item });">{{ item }}</a>
+        </li>
+      </ul>
+    </div>
+</div>

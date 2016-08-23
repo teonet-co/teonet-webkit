@@ -1,5 +1,6 @@
     <form novalidate class="bootstrap-form-with-validation">
         <h2 class="text-center">Bootstrap form basic</h2>
+        
         <div class="form-group">
             <label class="control-label" for="text-input">Name</label>
             <input class="form-control" type="text" name="text-input" id="text-input" ng-model="user.name">
@@ -66,9 +67,16 @@
     
     <p>{{ var17 }}</p>
     
-    <button ng-click="count = count + 1" ng-init="count=0">
+    <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{ count }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ count }}%;">
+        <span class="sr-only">{{ count }}% Complete</span>
+      </div>
+    </div>
+            
+    <button class="btn btn-default" ng-click="count = count + 1" ng-init="count=0">
     Increment
     </button>
     <span>
       count: {{count}}
-    </span>
+    </span><br>
+    <br>

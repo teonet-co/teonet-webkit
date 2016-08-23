@@ -7,12 +7,13 @@
  * # TeoDbCtrl
  * Controller of the teonetWebkitApp
  * @param $scope
- * @param teonet
- * @param {type} scopes description
+ * @param $localStorage
+ * @param teonetRestApi
+ * @param scopes
  */
 angular.module('teonetWebkitApp')
 
-.controller('TeoDbCtrl', function ($scope, teonet, scopes) {
+.controller('TeoDbCtrl', function ($scope, $localStorage, teonetRestApi, scopes) {
 
     this.awesomeThings = [
       'HTML5 Boilerplate',
@@ -20,110 +21,76 @@ angular.module('teonetWebkitApp')
       'Karma'
     ];
 
-    // This is Teonet based controller, exit if teonet undefined
-    if(!teonet || teonet.notLoaded) { return; }
+    if(!teonetRestApi || !teonetRestApi.start) { return; }
 
+    scopes.set('TeoDbCtrl', $scope);
 
-    // \todo write yor code here and inside the eventCb function
+    // Execute TeoDB data request
+    $scope.exec = function (peer) {
+        
+        console.log('$scope.exec, peer: ' + peer);
+        
+        function getData(key, from, to/*, listLen*/) {
+            
+            // Get list data
+            teonetRestApi.exec(peer, 136, JSON.stringify({ key: key, from: from, to: to }), 
+                function(err, res) {
 
-    // ------------------------------------------------------------------------
-
-    /**
-     * Teonet event callback
-     *
-     * Original C function parameters:
-     * void roomEventCb(ksnetEvMgrClass *ke, ksnetEvMgrEvents event, void *data, size_t data_len, void *user_data)
-     *
-     * @param {pointer} ke Pointer to ksnetEvMgrClass, see the http://repo.ksproject.org/docs/teonet/structksnetEvMgrClass.html
-     * @param {int} ev Teonet event number, see the http://repo.ksproject.org/docs/teonet/ev__mgr_8h.html#ad7b9bff24cb809ad64c305b3ec3a21fe
-     * @param {pointer} data Binary or string (depended on event) data
-     * -param {int} dataLen Data length
-     * -param {pointer} userData Additional poiner to User data
-     *
-     * @returns {int} If true then event is processed and will not send to other
-     *                registerredcustom event callbacks
-     */
-//    function eventCb(ke, ev, data) { //, dataLen, userData) {
-//
-//        //console.log('TeoDbCtrl: Custom event callback called');
-//
-//        var rd;
-//
-//        switch (ev) {
-//
-//            // EV_K_RECEIVED #5 This host Received a data
-//            case teonet.ev.EV_K_RECEIVED:
-//
-//                rd = new teonet.packetData(data);
-//
-//                // Command
-//                switch (rd.cmd) {
-//
-//                    // Process Echo answer #66 command
-//                    case teonet.api.CMD_ECHO_ANSWER:
-//                        //console.log('TeoDbCtrl: Echo answer command event received');
-//                        break;
-//
-//                    // Process User #129 command
-//                    case teonet.api.CMD_USER:
-//                        //console.log('TeoDbCtrl: Echo answer command event received');
-//                        break;
-//
-//                    default: break;
-//                }
-//                break;
-//
-//            // EV_A_INTERVAL #27 Angular interval event happened
-//            case teonet.ev.EV_A_INTERVAL:
-//
-//                //console.log('TeoDbCtrl: Interval event received');
-//                break;
-//
-//            default: break;
-//        }
-//
-//        return 0;
-//    }
-
-    // Start processing teonet controller
-    teonet.processing($scope, null, 0, function() {
-        //console.log('TeoDbCtrl: Start processing teonet controller');
-        scopes.get('RestApiCtrl').setData('', 0, 25);
-    });
-})
-
-.controller('TeoDbSelectCtrl', function($localStorage, teonet, scopes) {
-
-    var vm = this;
-    vm.peerItems = teonet.appTypes['teo-db'];
-    if(!vm.peerItems) { vm.peerItems = []; }
-
-    // Set LocalStorage Defaults
-    if(!$localStorage.restapi) { $localStorage.restapi = {}; }
-    if(!$localStorage.restapi.req) {
-        $localStorage.restapi.req = {
-            peer: vm.peerItems[0],
-            cmd: 136,
-            data: {
-                key: '',
-                from: 0,
-                to: 25
+                    if(err) {
+                        return;
+                    }
+                    
+                    console.log('getData, data: ' + JSON.stringify(res));
+                    //$scope.data = data.concat(res.data);
+                    //$scope.data = 
+                    
+                    //$scope.data.push(res.data);                    
+                    $scope.data = res.data;
+                    
+                    //$scope.$apply();
+//                    if(to < listLen) {
+//                        getData(data, key, to, to + 25, listLen);
+//                    }
+                }
+            );
+        }
+        
+        // Get list length
+        teonetRestApi.exec(peer, 134, JSON.stringify({ key: '' }), 
+        function(err, res) {
+            
+            if(err) {
+                return;
             }
-        };
-    }
-    vm.peerSelected = $localStorage.restapi.req.peer;
-    if(!vm.peerSelected) { vm.peerSelected = vm.peerItems[0]; }
-
-    vm.selectPeer = function(db) {
-
-        var restApi = scopes.get('RestApiCtrl');
-
-        // Selected peer
-        vm.peerSelected = restApi.req.peer = db.name;
-
-        // Use restApi controller scope to refresh database key list
-        restApi.doClick(db.name, teonet.api.CMD_D_LIST_LENGTH, restApi.req.data);
-        restApi.doClick(db.name, teonet.api.CMD_D_LIST_RANGE, restApi.req.data);
+            
+            $scope.listLen = res.data.listLen;
+            $scope.data = [];
+        
+            // Get list data
+            getData('', 0, 25, $scope.listLen);
+//            teonetRestApi.exec(peer, 136, JSON.stringify({ key: '', from: 0, to: 25 }), 
+//            function(err, res) {
+//                
+//                if(err) {
+//                    return;
+//                }
+//                $scope.data = $scope.data.concat(res.data);
+//            });
+        });
     };
+    
+    // Start RestAPI server
+    teonetRestApi.start($scope, function(err/*, success*/) {
+        
+        if(err) {
+            console.log(err);
+            return;
+        }
+        
+        console.log('teonetRestApi started');
+        $scope.exec($localStorage.peerSelect.selected.name);
+    });
+    
 })
+
 ;

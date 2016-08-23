@@ -1,1 +1,8 @@
-{"elements":{},"attributes":{"bs-navbar":{}}}
+{
+    "elements": {
+        "peer-select": {}
+    },
+    "attributes": {
+        "bs-navbar": {}
+    }
+}
