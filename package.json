@@ -1,6 +1,6 @@
 {
   "name": "teowk-3",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Teonet server node webkit",
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",
@@ -37,7 +37,7 @@
     "karma-phantomjs-launcher": "^1.0.1",
     "phantomjs-prebuilt": "^2.1.10",
     "time-grunt": "^1.0.0",
-    "teonet": "^0.0.39"
+    "teonet": "^0.0.40"
   },
   "engines": {
     "node": ">=0.10.0"

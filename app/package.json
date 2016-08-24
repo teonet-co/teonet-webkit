@@ -1,10 +1,10 @@
 {
   "name": "teowk-3",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Teonet server node webkit",
   "main": "index.html",
   "dependencies": {
-    "teonet": "^0.0.39",
+    "teonet": "^0.0.40",
     "express": "^4.14.0"
   },
   "scripts": {
