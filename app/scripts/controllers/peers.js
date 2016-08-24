@@ -6,6 +6,8 @@
  * @description
  * # PeersCtrl
  * Controller of the teonetWebkitApp
+ * @param $scope
+ * @param teonet
  */
 angular.module('teonetWebkitApp')
 
@@ -21,7 +23,7 @@ angular.module('teonetWebkitApp')
     if(!teonet || teonet.notLoaded) { return; }
 
 
-    // \todo write yor code here and inside the eventCb function
+    // Set peer items from teonet factory
     $scope.peersItems = teonet.peersItems;
   
     // ------------------------------------------------------------------------
@@ -41,51 +43,50 @@ angular.module('teonetWebkitApp')
      * @returns {int} If true then event is processed and will not send to other
      *                registerredcustom event callbacks
      */
-    function eventCb(ke, ev, data) { //, dataLen, userData) {
-
-        //console.log('PeersCtrl: Custom event callback called');
-        
-        var rd;
-
-        switch (ev) {
-            
-            // EV_K_RECEIVED #5 This host Received a data
-            case teonet.ev.EV_K_RECEIVED:
-                
-                rd = new teonet.packetData(data);
-
-                // Command
-                switch (rd.cmd) {
-                    
-                    // Process Echo answer #66 command
-                    case teonet.api.CMD_ECHO_ANSWER:
-                        //console.log('PeersCtrl: Echo answer command event received');
-                        break;
-                    
-                    // Process User #129 command
-                    case teonet.api.CMD_USER:
-                        //console.log('PeersCtrl: Echo answer command event received');
-                        break;
-
-                    default: break;
-                } 
-                break;
-                
-            // EV_A_INTERVAL #27 Angular interval event happened    
-            case teonet.ev.EV_A_INTERVAL:
-                
-                //console.log('PeersCtrl: Interval event received');
-                break;
-            
-            default: break;
-        }
-        
-        return 0;
-    }
+//    function eventCb(ke, ev, data) { //, dataLen, userData) {
+//
+//        //console.log('PeersCtrl: Custom event callback called');
+//        
+//        var rd;
+//
+//        switch (ev) {
+//            
+//            // EV_K_RECEIVED #5 This host Received a data
+//            case teonet.ev.EV_K_RECEIVED:
+//                
+//                rd = new teonet.packetData(data);
+//
+//                // Command
+//                switch (rd.cmd) {
+//                    
+//                    // Process Echo answer #66 command
+//                    case teonet.api.CMD_ECHO_ANSWER:
+//                        //console.log('PeersCtrl: Echo answer command event received');
+//                        break;
+//                    
+//                    // Process User #129 command
+//                    case teonet.api.CMD_USER:
+//                        //console.log('PeersCtrl: Echo answer command event received');
+//                        break;
+//
+//                    default: break;
+//                } 
+//                break;
+//                
+//            // EV_A_INTERVAL #27 Angular interval event happened    
+//            case teonet.ev.EV_A_INTERVAL:                
+//                //console.log('PeersCtrl: Interval event received');
+//                break;
+//            
+//            default: break;
+//        }
+//        
+//        return 0;
+//    }
 
     // Start processing teonet controller
-    teonet.processing($scope, eventCb, 1000, function() {
-        console.log('PeersCtrl: Start processing teonet controller');
-    }); 
+//    teonet.processing($scope, null, 1000, function() {
+//        console.log('PeersCtrl: Start processing teonet controller');
+//    }); 
 
   });

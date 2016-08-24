@@ -1,6 +1,10 @@
 {
     "elements": {
-        "peer-select": {}
+        "peer-select": {
+            "attributes": {
+                "type": {}
+            }
+        }
     },
     "attributes": {
         "bs-navbar": {}

@@ -9,11 +9,10 @@
  * @param $scope
  * @param $localStorage
  * @param teonetRestApi
- * @param scopes
  */
 angular.module('teonetWebkitApp')
 
-.controller('TeoDbCtrl', function ($scope, $localStorage, teonetRestApi, scopes) {
+.controller('TeoDbCtrl', function ($scope, $localStorage, teonetRestApi) {
 
     this.awesomeThings = [
       'HTML5 Boilerplate',
@@ -23,41 +22,33 @@ angular.module('teonetWebkitApp')
 
     if(!teonetRestApi || !teonetRestApi.start) { return; }
 
-    scopes.set('TeoDbCtrl', $scope);
-
     // Execute TeoDB data request
     $scope.exec = function (peer) {
         
         console.log('$scope.exec, peer: ' + peer);
         
-        function getData(key, from, to/*, listLen*/) {
+        function getData(data, key, from, to, listLen) {
             
             // Get list data
             teonetRestApi.exec(peer, 136, JSON.stringify({ key: key, from: from, to: to }), 
-                function(err, res) {
+              function(err, res) {
 
-                    if(err) {
-                        return;
-                    }
-                    
-                    console.log('getData, data: ' + JSON.stringify(res));
-                    //$scope.data = data.concat(res.data);
-                    //$scope.data = 
-                    
-                    //$scope.data.push(res.data);                    
-                    $scope.data = res.data;
-                    
-                    //$scope.$apply();
-//                    if(to < listLen) {
-//                        getData(data, key, to, to + 25, listLen);
-//                    }
+                if(err) {
+                    return;
                 }
+
+                //console.log('getData, data: ' + JSON.stringify(res));
+                $scope.data = data.concat(res.data);
+                if(to < listLen) {
+                    getData($scope.data, key, to, to + 25, listLen);
+                }
+              }
             );
         }
         
         // Get list length
         teonetRestApi.exec(peer, 134, JSON.stringify({ key: '' }), 
-        function(err, res) {
+          function(err, res) {
             
             if(err) {
                 return;
@@ -67,16 +58,9 @@ angular.module('teonetWebkitApp')
             $scope.data = [];
         
             // Get list data
-            getData('', 0, 25, $scope.listLen);
-//            teonetRestApi.exec(peer, 136, JSON.stringify({ key: '', from: 0, to: 25 }), 
-//            function(err, res) {
-//                
-//                if(err) {
-//                    return;
-//                }
-//                $scope.data = $scope.data.concat(res.data);
-//            });
-        });
+            getData($scope.data, '', 0, 25, $scope.listLen);
+          }
+        );
     };
     
     // Start RestAPI server
@@ -89,8 +73,7 @@ angular.module('teonetWebkitApp')
         
         console.log('teonetRestApi started');
         $scope.exec($localStorage.peerSelect.selected.name);
-    });
-    
+    });    
 })
 
 ;

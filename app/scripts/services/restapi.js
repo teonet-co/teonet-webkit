@@ -55,7 +55,7 @@ angular.module('teonetWebkitApp')
    */
   function eventCb(ke, ev, data) { //, dataLen, userData) {
 
-      //console.log('RestApiCtrl: Custom event callback called');
+      //console.log('teonetRestApi: Custom event callback called');
 
       var rd;
 
@@ -71,18 +71,18 @@ angular.module('teonetWebkitApp')
 
                   // Process Echo answer #66 command
                   case teonet.api.CMD_ECHO_ANSWER:
-                      //console.log('RestApiCtrl: Echo answer command event received');
+                      //console.log('teonetRestApi: Echo answer command event received');
                       break;
 
                   // Process User #129 command
                   case teonet.api.CMD_USER:
-                      //console.log('RestApiCtrl: User #1 command received');
+                      //console.log('teonetRestApi: User #1 command received');
                       break;
 
                   // Process CMD_D_LIST_ANSWER #133, #137 command
                   case teonet.api.CMD_D_LIST_ANSWER:
                   case teonet.api.CMD_D_LIST_RANGE_ANSWER:
-                      //console.log('RestApiCtrl: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
+                      //console.log('teonetRestApi: CMD #' + rd.cmd + ' command received, data: ' + rd.data);
                       var obj = isJsonString(rd.data);
                       if(obj && obj[0] && obj[0].id) {
                         teonet.cqueSetData(ke, obj[0].id, JSON.stringify(obj));
@@ -90,10 +90,10 @@ angular.module('teonetWebkitApp')
                       }
                       break;
 
-                  // Process CMD_D_LIST_LENGTH_ANSWER #135 command
+                  // Process CMD_D_LIST_LENGTH_ANSWER #135, #132 command
+                  case teonet.api.CMD_D_GET_ANSWER:
                   case teonet.api.CMD_D_LIST_LENGTH_ANSWER:
-                      console.log('RestApiCtrl: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
-                      //teonet.res.send(rd.data);
+                      //console.log('teonetRestApi: CMD_D_LIST_LENGTH_ANSWER #135 command received, data: ' + rd.data);
                       obj = isJsonString(rd.data);
                       if(obj && obj.id) {
                         teonet.cqueSetData(ke, obj.id, JSON.stringify(obj));
@@ -134,7 +134,7 @@ angular.module('teonetWebkitApp')
        */
       function() {
 
-        //console.log('RestApiCtrl: Start processing teonet controller');
+        //console.log('teonetRestApi: Start processing teonet controller');
         var startMsg;
 
         // Start and process RestAPI server
@@ -200,7 +200,7 @@ angular.module('teonetWebkitApp')
        */
       function() {
 
-        console.log('RestApiCtrl: Stop processing teonet controller');
+        //console.log('teonetRestApi: Stop processing teonetRestApi factory');
         if(server) {
           server.close(function() {
             console.log('RestAPI data server closed.');

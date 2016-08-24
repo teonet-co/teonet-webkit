@@ -29,30 +29,35 @@ angular.module('teonetWebkitApp')
   return {
     restrict: 'AE',
     replace:  'true',
+    scope: {
+      appType: '@type',
+      execFn: '&exec'
+    },
     templateUrl: 'views/peer-select.html',
-    controller: ['$scope', '$localStorage', 'teonet', 'scopes',
-        function ($scope, $localStorage, teonet, scopes) {
+    controller: ['$scope', '$localStorage', 'teonet',
+        function ($scope, $localStorage, teonet) {
 
         // This is Teonet based controller, exit if teonet undefined
         if(!teonet || teonet.notLoaded) { return; }
 
         // Set peers
-        $scope.peerItems = teonet.appTypes['teo-db'];
+        $scope.peerItems = teonet.appTypes[$scope.appType];
         if(!$scope.peerItems) { $scope.peerItems = []; }
 
-        // Get selected peer
+        // Get selected peer from Local Storage
         if(!$localStorage.peerSelect) { $localStorage.peerSelect = {}; }
         if(!$localStorage.peerSelect.selected) {
-            $localStorage.peerSelect.selected = { name: $scope.peerItems[0] };
+            $localStorage.peerSelect.selected = { 
+                name: $scope.peerItems[0] 
+            };
         }
         $scope.peerSelected = $localStorage.peerSelect.selected;
 
         $scope.selectPeer = function(db) {
 
-            // Set selected peer
+            // Set selected peer and execute function from trag exec atributte
             $scope.peerSelected.name = db.name;
-            var teodb = scopes.get('TeoDbCtrl');
-            teodb.exec(db.name);
+            $scope.execFn({name: db.name});
         };
     }]
   };

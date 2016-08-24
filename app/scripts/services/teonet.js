@@ -158,6 +158,7 @@ angular.module('teonetWebkitApp')
                         // Process command #66 CMD_ECHO_ANSWER
                         case teonet.api.CMD_ECHO_ANSWER:
                             getArp(ke, rd.from);
+                            $rootScope.$apply();
                             break;
 
                         // Process command #91 CMD_HOST_INFO_ANSWER
@@ -192,6 +193,7 @@ angular.module('teonetWebkitApp')
                                         teonet.appTypes[appType].sort();
                                     }
                                 }
+                                $rootScope.$apply();
                             }
                             break;
 

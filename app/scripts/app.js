@@ -35,6 +35,9 @@ angular
         CMD_USER: 129,                      ///< #129 First user command
         
         // TeoDB commands
+        CMD_D_GET: 130,                     ///< #130 Get data request:     { key, id } }
+        CMD_D_GET_ANSWER: 132,              ///< #132 Get data response:    { key, data, data_len, id } }
+        
         CMD_D_LIST: 131,                    ///< #131 List request: { key, id } }
         CMD_D_LIST_ANSWER: 133,             ///< #133 List response:  [ { key, id }, ... ]
         
