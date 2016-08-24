@@ -19,6 +19,8 @@ angular.module('teonetWebkitApp')
       'AngularJS',
       'Karma'
     ];
+    
+    var range = 100;
 
     if(!teonetRestApi || !teonetRestApi.start) { return; }
 
@@ -27,7 +29,7 @@ angular.module('teonetWebkitApp')
         
         console.log('$scope.exec, peer: ' + peer);
         
-        function getData(data, key, from, to, listLen) {
+        function getData(data, key, from, to/*, listLen*/) {
             
             // Get list data
             teonetRestApi.exec(peer, 136, JSON.stringify({ key: key, from: from, to: to }), 
@@ -39,9 +41,9 @@ angular.module('teonetWebkitApp')
 
                 //console.log('getData, data: ' + JSON.stringify(res));
                 $scope.data = data.concat(res.data);
-                if(to < listLen) {
-                    getData($scope.data, key, to, to + 25, listLen);
-                }
+//                if(to < listLen) {
+//                    getData($scope.data, key, to, to + range, listLen);
+//                }
               }
             );
         }
@@ -58,7 +60,7 @@ angular.module('teonetWebkitApp')
             $scope.data = [];
         
             // Get list data
-            getData($scope.data, '', 0, 25, $scope.listLen);
+            getData($scope.data, '', 0, range, $scope.listLen);
           }
         );
     };
