@@ -1,6 +1,6 @@
 {
   "name": "teowk-3",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Teonet server node webkit",
   "main": "index.html",
   "dependencies": {
