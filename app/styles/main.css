@@ -9,6 +9,30 @@ body {
   padding: 0;
 }
 
+/* ks: for fixed top navbar */
+body { 
+  padding-top: 70px; 
+}
+/* ks: for fixed bottom navbar */
+body { 
+  padding-bottom: 70px; 
+}
+/* ks: Set default p marging to fix some vendor changes */
+p {
+    margin: 14px 0;
+}
+/* ks: Teonet label red color and font sizze 90% */
+.teonet-red {
+  color: rgb(181, 46, 49);
+}
+.teonet-sm {
+  font-size: 90%;  
+}
+/* ks: full screen container */
+.container {
+    margin: 0;
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -32,7 +56,7 @@ body {
 
 /* Custom page footer */
 .footer {
-  padding-top: 19px;
+/*  padding-top: 19px;*/ /* ks: for fixed bottom navbar */
   color: #777;
   border-top: 1px solid #e5e5e5;
 }
@@ -62,7 +86,7 @@ body {
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
-    /*max-width: 730px;*/
+    /*max-width: 730px;*/ /* ks: fix container size */
   }
 
   /* Remove the padding we set earlier */
@@ -74,7 +98,7 @@ body {
   }
   /* Space out the masthead */
   .header {
-    margin-bottom: 30px;
+/*    margin-bottom: 30px;*/ /* ks: fix it */
   }
   /* Remove the bottom border on the jumbotron for visual effect */
   .jumbotron {

@@ -16,8 +16,8 @@
         <input class="form-control" type="text" name="data-input" id="text-input" ng-model="req.data">
     </div>
     <div class="form-group">
-        <button type="submit" ng-click="doClick(req.peer, req.cmd, req.data)">Send RestAPI Request</button>
-        <button type="button" ng-click="res = undefined;">Clear all responses</button>
+        <button class="btn btn-primary" type="submit" ng-click="doClick(req.peer, req.cmd, req.data)">Send RestAPI Request</button>
+        <button class="btn btn-default" type="button" ng-click="res = undefined;">Clear all responses</button>
     </div>
 
     <hr>
