@@ -29,7 +29,7 @@ module.exports = function(config) {
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-sanitize/angular-sanitize.js',
       'bower_components/angular-touch/angular-touch.js',
-      'bower_components/datatables/media/js/jquery.dataTables.js',
+      'bower_components/datatables.net/js/jquery.dataTables.js',
       'bower_components/angular-datatables/dist/angular-datatables.js',
       'bower_components/angular-datatables/dist/plugins/bootstrap/angular-datatables.bootstrap.js',
       'bower_components/angular-datatables/dist/plugins/colreorder/angular-datatables.colreorder.js',
